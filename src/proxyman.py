@@ -48,7 +48,7 @@ class ProxyManager:
         config = {}
         
         # HTTP proxy settings
-        print_colored("📡 HTTP Proxy Settings", self.colors['cyan'])
+        print_colored("HTTP Proxy Settings", self.colors['cyan'])
         config['http_host'] = get_user_input("HTTP Proxy Host")
         if not config['http_host']:
             print_error("HTTP proxy host is required")
@@ -88,7 +88,7 @@ class ProxyManager:
                 print_error("Invalid HTTPS port number")
                 return None
             
-            print_colored("📁 FTP Proxy Settings", self.colors['cyan'])
+            print_colored("FTP Proxy Settings", self.colors['cyan'])
             config['ftp_host'] = get_user_input("FTP Proxy Host", config['http_host'])
             ftp_port = get_user_input("FTP Proxy Port", str(config['http_port']))
             try:

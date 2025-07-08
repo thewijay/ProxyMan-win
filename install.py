@@ -73,7 +73,7 @@ def add_to_path():
     
     # Check if we're on Windows
     if os.name != 'nt':
-        print_colored("⚠️  PATH modification only supported on Windows", 'yellow')
+        print_colored("PATH modification only supported on Windows", 'yellow')
         print_colored("You can still run ProxyMan using:", 'cyan')
         print_colored(f"  python {os.path.join(current_dir, 'proxyman.py')}", 'white')
         print_colored(f"  or {os.path.join(current_dir, 'proxyman.bat')}", 'white')
@@ -96,29 +96,45 @@ def add_to_path():
         if current_dir not in current_path:
             new_path = f"{current_path};{current_dir}" if current_path else current_dir
             winreg.SetValueEx(key, "PATH", 0, winreg.REG_EXPAND_SZ, new_path)
-            print_colored("✅ Added to user PATH", 'green')
+            print_colored("Added to user PATH", 'green')
         else:
-            print_colored("✅ Already in user PATH", 'green')
+            print_colored("Already in user PATH", 'green')
         
         winreg.CloseKey(key)
         
-        # Notify system of PATH change
-        import ctypes
-        from ctypes import wintypes
-        user32 = ctypes.windll.user32
-        user32.SendMessageW(0xFFFF, 0x1A, 0, "Environment")
+        # Notify system of PATH change (with timeout to prevent hanging)
+        try:
+            import ctypes
+            from ctypes import wintypes
+            user32 = ctypes.windll.user32
+            # Use a timeout to prevent hanging
+            import threading
+            
+            def notify_system():
+                try:
+                    user32.SendMessageW(0xFFFF, 0x1A, 0, "Environment")
+                except:
+                    pass  # Ignore any errors from the notification
+            
+            # Run notification in a separate thread with timeout
+            thread = threading.Thread(target=notify_system)
+            thread.daemon = True
+            thread.start()
+            thread.join(timeout=2.0)  # 2 second timeout
+        except:
+            pass  # Ignore any errors with the notification system
         
         return True
         
     except ImportError:
-        print_colored("❌ winreg module not available (Windows only)", 'red')
+        print_colored("winreg module not available (Windows only)", 'red')
         print_colored("You can still run ProxyMan using:", 'cyan')
         print_colored(f"  python {os.path.join(current_dir, 'proxyman.py')}", 'white')
         print_colored(f"  or {os.path.join(current_dir, 'proxyman.bat')}", 'white')
         return False
         
     except Exception as e:
-        print_colored(f"❌ Failed to add to user PATH: {e}", 'red')
+        print_colored(f"Failed to add to user PATH: {e}", 'red')
         
         # If we have admin privileges, try system PATH as fallback
         if is_admin():
@@ -137,19 +153,34 @@ def add_to_path():
                 if current_dir not in current_path:
                     new_path = f"{current_path};{current_dir}" if current_path else current_dir
                     winreg.SetValueEx(key, "PATH", 0, winreg.REG_EXPAND_SZ, new_path)
-                    print_colored("✅ Added to system PATH", 'green')
+                    print_colored("Added to system PATH", 'green')
                 else:
-                    print_colored("✅ Already in system PATH", 'green')
+                    print_colored("Already in system PATH", 'green')
                 
                 winreg.CloseKey(key)
-                user32.SendMessageW(0xFFFF, 0x1A, 0, "Environment")
+                
+                # Notify system of PATH change (with timeout to prevent hanging)
+                try:
+                    def notify_system():
+                        try:
+                            user32.SendMessageW(0xFFFF, 0x1A, 0, "Environment")
+                        except:
+                            pass
+                    
+                    thread = threading.Thread(target=notify_system)
+                    thread.daemon = True
+                    thread.start()
+                    thread.join(timeout=2.0)
+                except:
+                    pass
+                
                 return True
                 
             except Exception as e2:
-                print_colored(f"❌ Failed to add to system PATH: {e2}", 'red')
+                print_colored(f"Failed to add to system PATH: {e2}", 'red')
         
         # If all fails, provide manual instructions
-        print_colored("⚠️  Could not automatically add to PATH", 'yellow')
+        print_colored("Could not automatically add to PATH", 'yellow')
         print_colored("You can still run ProxyMan using:", 'cyan')
         print_colored(f"  python {os.path.join(current_dir, 'proxyman.py')}", 'white')
         print_colored(f"  or {os.path.join(current_dir, 'proxyman.bat')}", 'white')
@@ -158,15 +189,15 @@ def add_to_path():
 
 def main():
     """Main installation function"""
-    print_colored("🚀 ProxyMan Windows Installer", 'cyan')
+    print_colored("ProxyMan Windows Installer", 'cyan')
     print_colored("=" * 40, 'cyan')
     
     # Check Python version
     if sys.version_info < (3, 7):
-        print_colored("❌ Python 3.7 or higher is required", 'red')
+        print_colored("Python 3.7 or higher is required", 'red')
         return False
     
-    print_colored(f"✅ Python {sys.version_info.major}.{sys.version_info.minor} detected", 'green')
+    print_colored(f"Python {sys.version_info.major}.{sys.version_info.minor} detected", 'green')
     
     # Install dependencies
     if not install_dependencies():
@@ -179,7 +210,7 @@ def main():
     # Add to PATH
     path_success = add_to_path()
     
-    print_colored("\n🎉 Installation completed!", 'green')
+    print_colored("\nInstallation completed!", 'green')
     
     if path_success:
         print_colored("You can now use ProxyMan with:", 'cyan')
@@ -195,7 +226,7 @@ def main():
         print_colored(f"  2. Add this path to your user PATH: {os.path.dirname(os.path.abspath(__file__))}", 'white')
     
     if not is_admin():
-        print_colored("\n⚠️  Note: Run as administrator for full functionality", 'yellow')
+        print_colored("\nNote: Run as administrator for full functionality", 'yellow')
     
     return True
 
@@ -209,5 +240,5 @@ if __name__ == "__main__":
         print_colored("\n\nInstallation cancelled by user", 'yellow')
         sys.exit(1)
     except Exception as e:
-        print_colored(f"\n❌ Installation failed: {e}", 'red')
+        print_colored(f"\nInstallation failed: {e}", 'red')
         sys.exit(1)

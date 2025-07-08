@@ -73,7 +73,7 @@ def run_as_admin(func):
     """Decorator to run a function with administrator privileges."""
     def wrapper(*args, **kwargs):
         if not is_admin():
-            print_colored("⚠️  This operation requires administrator privileges", get_colors()['yellow'])
+            print_colored("This operation requires administrator privileges", get_colors()['yellow'])
             print_colored("Please run as administrator or some operations may fail", get_colors()['yellow'])
         return func(*args, **kwargs)
     return wrapper
@@ -90,7 +90,7 @@ def validate_proxy_config(config: Dict[str, Any]) -> bool:
     
     for field in required_fields:
         if not config.get(field):
-            print_colored(f"❌ Missing required field: {field}", get_colors()['red'])
+            print_colored(f"Missing required field: {field}", get_colors()['red'])
             return False
     
     # Validate ports
@@ -100,11 +100,11 @@ def validate_proxy_config(config: Dict[str, Any]) -> bool:
             try:
                 config[port_field] = int(port)
             except ValueError:
-                print_colored(f"❌ Invalid port number: {port}", get_colors()['red'])
+                print_colored(f"Invalid port number: {port}", get_colors()['red'])
                 return False
         
         if port and (port < 1 or port > 65535):
-            print_colored(f"❌ Port number out of range: {port}", get_colors()['red'])
+            print_colored(f"Port number out of range: {port}", get_colors()['red'])
             return False
     
     return True
@@ -205,19 +205,19 @@ def print_header(title: str) -> None:
 
 def print_success(message: str) -> None:
     """Print a success message."""
-    print_colored(f"✅ {message}", get_colors()['green'])
+    print_colored(f"{message}", get_colors()['green'])
 
 
 def print_error(message: str) -> None:
     """Print an error message."""
-    print_colored(f"❌ {message}", get_colors()['red'])
+    print_colored(f"{message}", get_colors()['red'])
 
 
 def print_warning(message: str) -> None:
     """Print a warning message."""
-    print_colored(f"⚠️  {message}", get_colors()['yellow'])
+    print_colored(f"{message}", get_colors()['yellow'])
 
 
 def print_info(message: str) -> None:
     """Print an info message."""
-    print_colored(f"ℹ️  {message}", get_colors()['blue'])
+    print_colored(f"{message}", get_colors()['blue'])

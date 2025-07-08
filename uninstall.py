@@ -60,10 +60,10 @@ def remove_from_path():
                 winreg.SetValueEx(key, "PATH", 0, winreg.REG_EXPAND_SZ, new_path)
                 print_colored("Removed from user PATH", 'green')
             else:
-                print_colored("ℹ️  Not found in user PATH", 'blue')
+                print_colored("Not found in user PATH", 'blue')
             
         except FileNotFoundError:
-            print_colored("ℹ️  PATH variable not found", 'blue')
+            print_colored("PATH variable not found", 'blue')
         
         winreg.CloseKey(key)
         
@@ -93,7 +93,7 @@ def remove_config_files():
             print_colored(f"Failed to remove config directory: {e}", 'red')
             return False
     else:
-        print_colored("ℹ️  No configuration directory found", 'blue')
+        print_colored("No configuration directory found", 'blue')
         return True
 
 
@@ -110,7 +110,7 @@ def remove_desktop_shortcut():
             print_colored(f"Could not remove desktop shortcut: {e}", 'yellow')
             return False
     else:
-        print_colored("ℹ️  No desktop shortcut found", 'blue')
+        print_colored("No desktop shortcut found", 'blue')
         return True
 
 
@@ -127,7 +127,7 @@ def remove_batch_file():
             print_colored(f"Failed to remove batch file: {e}", 'red')
             return False
     else:
-        print_colored("ℹ️  No batch file found", 'blue')
+        print_colored("No batch file found", 'blue')
         return True
 
 
@@ -159,7 +159,7 @@ def clear_proxy_settings():
 
 def main():
     """Main uninstallation function"""
-    print_colored("🗑️  ProxyMan Windows Uninstaller", 'cyan')
+    print_colored("ProxyMan Windows Uninstaller", 'cyan')
     print_colored("=" * 40, 'cyan')
     
     # Confirm uninstallation
@@ -189,22 +189,22 @@ def main():
     clear_proxy_settings()
     
     # Remove from PATH
-    print_colored("\n📍 Removing from PATH...", 'blue')
+    print_colored("\nRemoving from PATH...", 'blue')
     remove_from_path()
     
     # Remove configuration files
-    print_colored("\n📁 Removing configuration files...", 'blue')
+    print_colored("\nRemoving configuration files...", 'blue')
     remove_config_files()
     
     # Remove desktop shortcut
-    print_colored("\n🖥️  Removing shortcuts...", 'blue')
+    print_colored("\nRemoving shortcuts...", 'blue')
     remove_desktop_shortcut()
     
     # Remove batch file
     print_colored("\nRemoving batch file...", 'blue')
     remove_batch_file()
     
-    print_colored("\n🎉 Uninstallation completed!", 'green')
+    print_colored("\nUninstallation completed!", 'green')
     print_colored("ProxyMan Windows has been removed from your system.", 'green')
     
     print_colored("\n📋 Manual cleanup (if needed):", 'cyan')
