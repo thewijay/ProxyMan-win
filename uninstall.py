@@ -132,36 +132,29 @@ def remove_batch_file():
 
 
 def clear_proxy_settings():
-    """Offer to clear all proxy settings"""
+    """Clear all proxy settings non-interactively"""
     print_colored("\nProxy Settings Cleanup", 'cyan')
-    try:
-        response = input("Do you want to clear all proxy settings set by ProxyMan? (y/N): ").strip().lower()
-    except KeyboardInterrupt:
-        print_colored("\n\nOperation cancelled by user", 'yellow')
-        return
-    except EOFError:
-        print_colored("\n\nInput terminated", 'yellow')
-        return
     
-    if response in ['y', 'yes']:
-        try:
-            # Try to run ProxyMan unset command
-            if Path("proxyman.py").exists():
-                print_colored("Clearing proxy settings...", 'blue')
-                result = subprocess.run([sys.executable, "proxyman.py", "unset"], 
-                                      capture_output=True, text=True, timeout=30)
-                
-                if result.returncode == 0:
-                    print_colored("Proxy settings cleared", 'green')
-                else:
-                    print_colored("Some proxy settings may not have been cleared", 'yellow')
+    try:
+        # Try to run ProxyMan unset command with 'all' parameter to bypass interactive mode
+        if Path("proxyman.py").exists():
+            print_colored("Clearing proxy settings...", 'blue')
+            result = subprocess.run([sys.executable, "proxyman.py", "unset", "all"], 
+                                  capture_output=True, text=True, timeout=30)
+            
+            if result.returncode == 0:
+                print_colored("Proxy settings cleared", 'green')
             else:
-                print_colored("ProxyMan not found, cannot clear proxy settings", 'yellow')
-                print_colored("You may need to manually clear proxy settings", 'yellow')
-        except Exception as e:
-            print_colored(f"Error clearing proxy settings: {e}", 'yellow')
-    else:
-        print_colored("ℹ️  Proxy settings left unchanged", 'blue')
+                print_colored("Some proxy settings may not have been cleared", 'yellow')
+                if result.stderr:
+                    print_colored(f"Error: {result.stderr.strip()}", 'yellow')
+        else:
+            print_colored("ProxyMan not found, cannot clear proxy settings", 'yellow')
+            print_colored("You may need to manually clear proxy settings", 'yellow')
+    except subprocess.TimeoutExpired:
+        print_colored("Timeout while clearing proxy settings", 'yellow')
+    except Exception as e:
+        print_colored(f"Error clearing proxy settings: {e}", 'yellow')
 
 
 def main():

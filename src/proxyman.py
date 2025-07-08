@@ -107,8 +107,13 @@ class ProxyManager:
         
         return config
     
-    def _get_target_selection(self) -> Optional[List[str]]:
+    def _get_target_selection(self, allow_auto_all=False) -> Optional[List[str]]:
         """Get target selection from user."""
+        # Check if we're running non-interactively (e.g., from subprocess)
+        if allow_auto_all and not sys.stdin.isatty():
+            # Running non-interactively, return all targets
+            return list(self.available_targets.keys())
+        
         print_header("Select Proxy Targets")
         
         targets = list(self.available_targets.keys())
@@ -167,7 +172,7 @@ class ProxyManager:
     def unset_proxy(self, targets: List[str] = None) -> None:
         """Unset proxy settings."""
         if targets is None:
-            targets = self._get_target_selection()
+            targets = self._get_target_selection(allow_auto_all=True)
             if not targets:
                 return
         
@@ -306,6 +311,8 @@ class ProxyManager:
 {self.colors['bold']}Commands:{self.colors['reset']}
   {self.colors['green']}set{self.colors['reset']}                    Set proxy settings interactively
   {self.colors['green']}unset{self.colors['reset']}                  Unset proxy settings
+  {self.colors['green']}unset all{self.colors['reset']}              Unset proxy for all targets
+  {self.colors['green']}unset <target>{self.colors['reset']}         Unset proxy for specific target(s)
   {self.colors['green']}list{self.colors['reset']}                   List saved profiles (with active status)
   {self.colors['green']}configs{self.colors['reset']}                Show current settings for all targets
   {self.colors['green']}load <name>{self.colors['reset']}            Load and apply a saved configuration
@@ -318,7 +325,9 @@ class ProxyManager:
   proxyman load office           # Load 'office' configuration
   proxyman list                  # Show saved profiles with active status
   proxyman show-configs          # Show current settings for all targets
-  proxyman unset                 # Remove proxy settings
+  proxyman unset                 # Remove proxy settings (interactive)
+  proxyman unset all             # Remove proxy for all targets
+  proxyman unset windows npm     # Remove proxy for specific targets
 
 {self.colors['bold']}Supported Targets:{self.colors['reset']}
 """
@@ -400,7 +409,18 @@ def main():
             manager.interactive_set_proxy()
         
         elif command == 'unset':
-            manager.unset_proxy()
+            # Check for additional arguments
+            targets = None
+            if len(sys.argv) > 2:
+                if sys.argv[2] == 'all':
+                    targets = list(manager.available_targets.keys())
+                else:
+                    # Parse target names from command line
+                    targets = [arg.strip() for arg in sys.argv[2:] if arg.strip() in manager.available_targets]
+                    if not targets:
+                        print_error(f"Invalid targets specified. Available: {', '.join(manager.available_targets.keys())}")
+                        return
+            manager.unset_proxy(targets)
         
         elif command == 'list':
             manager.list_proxy_settings()
