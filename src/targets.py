@@ -109,6 +109,11 @@ class SystemProxyTarget(ProxyTarget):
     def unset_proxy(self) -> bool:
         """Unset system proxy settings."""
         try:
+            # Check if we're on Windows
+            if platform.system() != "Windows":
+                print_warning("System proxy settings are only available on Windows")
+                return True  # Return True to not break the chain
+            
             # Open registry key
             key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, self.reg_path, 0, winreg.KEY_SET_VALUE)
             
@@ -246,13 +251,15 @@ class EnvironmentProxyTarget(ProxyTarget):
                 if var in os.environ:
                     del os.environ[var]
             
-            # Remove persistent environment variables
-            success = self._remove_persistent_env_vars(proxy_vars)
-            
-            if success:
-                print_success("Environment proxy variables cleared")
+            # Remove persistent environment variables (Windows only)
+            if platform.system() == "Windows":
+                success = self._remove_persistent_env_vars(proxy_vars)
+                if success:
+                    print_success("Environment proxy variables cleared")
+                else:
+                    print_warning("Environment variables cleared for current session only")
             else:
-                print_warning("Environment variables cleared for current session only")
+                print_success("Environment proxy variables cleared (current session)")
             
             return True
             
@@ -345,12 +352,14 @@ class GitProxyTarget(ProxyTarget):
     def unset_proxy(self) -> bool:
         """Unset git proxy settings."""
         try:
-            # Remove HTTP proxy
-            run_command("git config --global --unset http.proxy")
+            # Remove HTTP proxy (ignore exit code - config may not exist)
+            success1, _, _ = run_command("git config --global --unset http.proxy")
             
-            # Remove HTTPS proxy
-            run_command("git config --global --unset https.proxy")
+            # Remove HTTPS proxy (ignore exit code - config may not exist)
+            success2, _, _ = run_command("git config --global --unset https.proxy")
             
+            # Git config --unset returns exit code 5 when key doesn't exist, which is normal
+            # So we consider it successful regardless of exit code
             print_success("Git proxy settings cleared")
             return True
             
@@ -419,11 +428,13 @@ class NPMProxyTarget(ProxyTarget):
     def unset_proxy(self) -> bool:
         """Unset npm proxy settings."""
         try:
-            # Remove proxy settings
-            run_command("npm config delete proxy")
-            run_command("npm config delete https-proxy")
-            run_command("npm config set strict-ssl true")
+            # Remove proxy settings (ignore exit codes - configs may not exist)
+            success1, _, _ = run_command("npm config delete proxy")
+            success2, _, _ = run_command("npm config delete https-proxy")
+            success3, _, _ = run_command("npm config set strict-ssl true")
             
+            # npm config delete returns non-zero when key doesn't exist, which is normal
+            # So we consider it successful regardless of individual exit codes
             print_success("NPM proxy settings cleared")
             return True
             
