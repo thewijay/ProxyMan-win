@@ -37,11 +37,17 @@ pip install -r requirements.txt
 
 To remove ProxyMan Windows from your system:
 
-### Python Uninstaller
+### Python Uninstaller (Recommended)
 
 ```powershell
 python uninstall.py
 ```
+
+The uninstaller will automatically:
+- Clear all proxy settings (no prompts needed)
+- Remove ProxyMan from system PATH
+- Remove configuration files and saved profiles
+- Remove desktop shortcuts and batch files
 
 ### PowerShell Uninstaller
 
@@ -56,13 +62,7 @@ python uninstall.py
 .\uninstall.ps1 -KeepConfig
 ```
 
-The uninstaller will remove:
-
-- ProxyMan from system PATH
-- Configuration files (unless -KeepConfig is used)
-- Desktop shortcuts
-- Batch files
-- Optionally clear all proxy settings
+**Note**: If the uninstaller hangs or shows interactive prompts, make sure you have the latest version. Use `git pull` to update or re-download the project.
 
 ## Basic Usage
 
@@ -103,9 +103,15 @@ Shows current proxy settings for all supported applications.
 # If proxyman is in PATH:
 proxyman unset
 
+# Remove all proxy settings (non-interactive):
+proxyman unset all
+
+# Remove proxy for specific targets:
+proxyman unset git npm
+
 # If not in PATH, use one of these:
 .\proxyman.bat unset
-python proxyman.py unset
+python proxyman.py unset all
 ```
 
 Removes proxy settings from selected applications.
@@ -219,6 +225,30 @@ proxyman delete office_proxy
 - Some applications may need to be restarted
 - System proxy changes are usually immediate
 - Environment variables affect new processes only
+
+### Uninstaller Issues
+
+**Error: "Uninstaller hangs or prompts for proxy settings cleanup"**
+
+This indicates you're running an older version of the uninstaller:
+
+```powershell
+# Update to the latest version:
+git pull
+
+# Or clear Python cache and retry:
+python -c "import py_compile; py_compile.compile('uninstall.py')"
+python uninstall.py
+
+# Or use the manual cleanup approach:
+python proxyman.py unset all
+python uninstall.py
+```
+
+**Error: "Command 'proxyman.py unset' timed out after 30 seconds"**
+
+- Update to the latest version which includes non-interactive unset
+- The new version uses `proxyman.py unset all` for automatic cleanup
 
 ### Getting Help
 
