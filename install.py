@@ -71,15 +71,16 @@ def add_to_path():
     """Add current directory to PATH"""
     current_dir = os.path.dirname(os.path.abspath(__file__))
     
-    if not is_admin():
-        print_colored("⚠️  Administrator privileges required to add to system PATH", 'yellow')
+    # Check if we're on Windows
+    if os.name != 'nt':
+        print_colored("⚠️  PATH modification only supported on Windows", 'yellow')
         print_colored("You can still run ProxyMan using:", 'cyan')
         print_colored(f"  python {os.path.join(current_dir, 'proxyman.py')}", 'white')
         print_colored(f"  or {os.path.join(current_dir, 'proxyman.bat')}", 'white')
         return False
     
     try:
-        # Add to user PATH
+        # Try to add to user PATH first (no admin required)
         import winreg
         
         # Open the registry key for user environment variables
@@ -95,9 +96,9 @@ def add_to_path():
         if current_dir not in current_path:
             new_path = f"{current_path};{current_dir}" if current_path else current_dir
             winreg.SetValueEx(key, "PATH", 0, winreg.REG_EXPAND_SZ, new_path)
-            print_colored("✅ Added to PATH", 'green')
+            print_colored("✅ Added to user PATH", 'green')
         else:
-            print_colored("✅ Already in PATH", 'green')
+            print_colored("✅ Already in user PATH", 'green')
         
         winreg.CloseKey(key)
         
@@ -109,8 +110,49 @@ def add_to_path():
         
         return True
         
+    except ImportError:
+        print_colored("❌ winreg module not available (Windows only)", 'red')
+        print_colored("You can still run ProxyMan using:", 'cyan')
+        print_colored(f"  python {os.path.join(current_dir, 'proxyman.py')}", 'white')
+        print_colored(f"  or {os.path.join(current_dir, 'proxyman.bat')}", 'white')
+        return False
+        
     except Exception as e:
-        print_colored(f"❌ Failed to add to PATH: {e}", 'red')
+        print_colored(f"❌ Failed to add to user PATH: {e}", 'red')
+        
+        # If we have admin privileges, try system PATH as fallback
+        if is_admin():
+            try:
+                print_colored("Trying system PATH...", 'blue')
+                # Add to system PATH
+                key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, 
+                                   "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment", 
+                                   0, winreg.KEY_SET_VALUE | winreg.KEY_READ)
+                
+                try:
+                    current_path = winreg.QueryValueEx(key, "PATH")[0]
+                except FileNotFoundError:
+                    current_path = ""
+                
+                if current_dir not in current_path:
+                    new_path = f"{current_path};{current_dir}" if current_path else current_dir
+                    winreg.SetValueEx(key, "PATH", 0, winreg.REG_EXPAND_SZ, new_path)
+                    print_colored("✅ Added to system PATH", 'green')
+                else:
+                    print_colored("✅ Already in system PATH", 'green')
+                
+                winreg.CloseKey(key)
+                user32.SendMessageW(0xFFFF, 0x1A, 0, "Environment")
+                return True
+                
+            except Exception as e2:
+                print_colored(f"❌ Failed to add to system PATH: {e2}", 'red')
+        
+        # If all fails, provide manual instructions
+        print_colored("⚠️  Could not automatically add to PATH", 'yellow')
+        print_colored("You can still run ProxyMan using:", 'cyan')
+        print_colored(f"  python {os.path.join(current_dir, 'proxyman.py')}", 'white')
+        print_colored(f"  or {os.path.join(current_dir, 'proxyman.bat')}", 'white')
         return False
 
 
@@ -135,13 +177,22 @@ def main():
         return False
     
     # Add to PATH
-    add_to_path()
+    path_success = add_to_path()
     
     print_colored("\n🎉 Installation completed!", 'green')
-    print_colored("You can now use ProxyMan with:", 'cyan')
-    print_colored("  proxyman help", 'white')
-    print_colored("  proxyman set", 'white')
-    print_colored("  proxyman list", 'white')
+    
+    if path_success:
+        print_colored("You can now use ProxyMan with:", 'cyan')
+        print_colored("  proxyman help", 'white')
+        print_colored("  proxyman set", 'white')
+        print_colored("  proxyman list", 'white')
+    else:
+        print_colored("Manual usage instructions:", 'cyan')
+        print_colored("  python proxyman.py help", 'white')
+        print_colored("  .\\proxyman.bat help", 'white')
+        print_colored("\nTo add to PATH manually:", 'yellow')
+        print_colored("  1. Open Environment Variables in System Properties", 'white')
+        print_colored(f"  2. Add this path to your user PATH: {os.path.dirname(os.path.abspath(__file__))}", 'white')
     
     if not is_admin():
         print_colored("\n⚠️  Note: Run as administrator for full functionality", 'yellow')

@@ -2,24 +2,24 @@
 
 ## Installation
 
-### Option 1: Simple Installation (Recommended)
+### Option 1: Python Installation (Cross-platform)
 
 ```powershell
 # Download or clone the repository
 git clone https://github.com/thewijay/ProxyMan-win.git
 cd ProxyMan-win
 
-# Run the Python installer
+# Run the Python installer (automatically adds to user PATH)
 python install.py
 ```
 
-### Option 2: PowerShell Installation
+### Option 2: PowerShell Installation (Windows-only)
 
 ```powershell
 # Quick installation (recommended):
 .\install.ps1 -Simple
 
-# Standard installation:
+# Standard installation with options:
 .\install.ps1
 ```
 
@@ -201,9 +201,28 @@ proxyman delete office_proxy
 
 **Error: "proxyman is not recognized"**
 
-- The tool is not in your system PATH
-- Use `.\proxyman.bat` or `python proxyman.py` instead
-- Or run `python install.py` as Administrator to add to PATH
+This happens when ProxyMan is not in your system PATH:
+
+```powershell
+# First, check if the installer succeeded:
+python install.py
+
+# If PATH wasn't added automatically, use these alternatives:
+.\proxyman.bat help
+python proxyman.py help
+
+# Or add to PATH manually:
+# 1. Open "Environment Variables" in Windows System Properties
+# 2. Edit your user PATH variable
+# 3. Add the ProxyMan directory path
+# 4. Restart your terminal
+```
+
+**Error: "Administrator privileges required to add to system PATH"**
+
+- The Python installer now automatically tries user PATH first (no admin needed)
+- Use `.\proxyman.bat` or `python proxyman.py` if PATH addition fails
+- For system-wide installation, run as Administrator or use PowerShell installer
 
 ### Common Issues
 
