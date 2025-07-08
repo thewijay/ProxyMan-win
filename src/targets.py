@@ -101,7 +101,7 @@ class SystemProxyTarget(ProxyTarget):
             
             winreg.CloseKey(key)
             
-            # Refresh system settings
+            # Refresh system settings (with timeout protection)
             self._refresh_system_settings()
             
             print_success("System proxy settings updated")
@@ -133,7 +133,7 @@ class SystemProxyTarget(ProxyTarget):
             
             winreg.CloseKey(key)
             
-            # Refresh system settings
+            # Refresh system settings (with timeout protection)
             self._refresh_system_settings()
             
             print_success("System proxy settings cleared")
@@ -183,12 +183,35 @@ class SystemProxyTarget(ProxyTarget):
     def _refresh_system_settings(self) -> None:
         """Refresh system proxy settings."""
         try:
-            # Notify system of proxy changes
+            # Skip refresh on non-Windows systems
+            if platform.system() != "Windows":
+                return
+            
+            # Notify system of proxy changes with timeout
             import ctypes
             from ctypes import wintypes
             
+            # Set a timeout for the SendMessage call to prevent hanging
+            # Use SendMessageTimeout instead of SendMessage for better control
             user32 = ctypes.windll.user32
-            user32.SendMessageW(0xFFFF, 0x1A, 0, "Environment")
+            SMTO_ABORTIFHUNG = 0x0002
+            SMTO_NORMAL = 0x0000
+            timeout_ms = 5000  # 5 second timeout
+            
+            # Use SendMessageTimeoutW to prevent hanging
+            result = user32.SendMessageTimeoutW(
+                0xFFFF,  # HWND_BROADCAST
+                0x1A,    # WM_SETTINGCHANGE
+                0,       # wParam
+                "Environment",  # lParam
+                SMTO_ABORTIFHUNG,  # fuFlags
+                timeout_ms,  # uTimeout
+                None     # lpdwResult
+            )
+            
+            if result == 0:
+                # SendMessageTimeout failed or timed out, but don't raise an error
+                pass
             
         except Exception:
             pass  # Ignore errors in refresh

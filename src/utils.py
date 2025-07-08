@@ -19,12 +19,21 @@ def setup_signal_handlers():
     """Setup signal handlers for graceful shutdown."""
     def signal_handler(signum, frame):
         print_colored("\n\nOperation interrupted by user", get_colors()['yellow'])
-        sys.exit(0)
+        # Force exit to ensure the program terminates
+        os._exit(0)
     
-    # Setup signal handlers
-    signal.signal(signal.SIGINT, signal_handler)
-    if hasattr(signal, 'SIGTERM'):
-        signal.signal(signal.SIGTERM, signal_handler)
+    try:
+        # Setup signal handlers
+        signal.signal(signal.SIGINT, signal_handler)
+        if hasattr(signal, 'SIGTERM'):
+            signal.signal(signal.SIGTERM, signal_handler)
+        
+        # On Windows, also handle SIGBREAK
+        if hasattr(signal, 'SIGBREAK'):
+            signal.signal(signal.SIGBREAK, signal_handler)
+    except Exception:
+        # If signal setup fails, continue without it
+        pass
 
 
 def get_colors() -> Dict[str, str]:
@@ -136,15 +145,22 @@ def get_user_input(prompt: str, default: str = None, password: bool = False) -> 
     try:
         if password:
             import getpass
-            return getpass.getpass(display_prompt)
+            result = getpass.getpass(display_prompt)
         else:
-            user_input = input(display_prompt).strip()
-            return user_input if user_input else (default or '')
+            # Flush stdout to ensure prompt is visible
+            sys.stdout.flush()
+            result = input(display_prompt).strip()
+        
+        return result if result else (default or '')
     except KeyboardInterrupt:
         print_colored("\n\nOperation cancelled by user", get_colors()['yellow'])
-        raise KeyboardInterrupt
+        # Force exit to prevent hanging
+        os._exit(1)
     except EOFError:
         print_colored("\n\nInput terminated", get_colors()['yellow'])
+        return default or ''
+    except Exception as e:
+        print_colored(f"\n\nInput error: {e}", get_colors()['red'])
         return default or ''
 
 
@@ -153,6 +169,8 @@ def get_yes_no_input(prompt: str, default: bool = False) -> bool:
     default_str = "Y/n" if default else "y/N"
     
     try:
+        # Flush stdout to ensure prompt is visible
+        sys.stdout.flush()
         response = input(f"{prompt} [{default_str}]: ").strip().lower()
         
         if not response:
@@ -161,9 +179,13 @@ def get_yes_no_input(prompt: str, default: bool = False) -> bool:
         return response in ['y', 'yes', '1', 'true']
     except KeyboardInterrupt:
         print_colored("\n\nOperation cancelled by user", get_colors()['yellow'])
-        raise KeyboardInterrupt
+        # Force exit to prevent hanging
+        os._exit(1)
     except EOFError:
         print_colored("\n\nInput terminated", get_colors()['yellow'])
+        return default
+    except Exception as e:
+        print_colored(f"\n\nInput error: {e}", get_colors()['red'])
         return default
 
 
