@@ -39,14 +39,14 @@ def is_admin():
 
 def install_dependencies():
     """Install Python dependencies"""
-    print_colored("📦 Installing dependencies...", 'blue')
+    print_colored("Installing dependencies...", 'blue')
     
     try:
         subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
-        print_colored("✅ Dependencies installed successfully", 'green')
+        print_colored("Dependencies installed successfully", 'green')
         return True
     except subprocess.CalledProcessError as e:
-        print_colored(f"❌ Failed to install dependencies: {e}", 'red')
+        print_colored(f"Failed to install dependencies: {e}", 'red')
         return False
 
 
@@ -60,7 +60,7 @@ python proxyman.py %*
     try:
         with open('proxyman.bat', 'w') as f:
             f.write(batch_content)
-        print_colored("✅ Created proxyman.bat", 'green')
+        print_colored("Created proxyman.bat", 'green')
         return True
     except Exception as e:
         print_colored(f"❌ Failed to create batch file: {e}", 'red')

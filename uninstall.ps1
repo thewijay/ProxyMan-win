@@ -42,14 +42,14 @@ function Remove-FromPath {
             $newPath = $newPathEntries -join ";"
             
             [Environment]::SetEnvironmentVariable("PATH", $newPath, "User")
-            Write-ColoredOutput "✅ Removed from user PATH" "Green"
+            Write-ColoredOutput "Removed from user PATH" "Green"
         } else {
             Write-ColoredOutput "ℹ️  Not found in user PATH" "Blue"
         }
         
         return $true
     } catch {
-        Write-ColoredOutput "⚠️  Could not remove from PATH: $_" "Yellow"
+        Write-ColoredOutput "Could not remove from PATH: $_" "Yellow"
         return $false
     }
 }
@@ -65,10 +65,10 @@ function Remove-ConfigFiles {
     if (Test-Path $configDir) {
         try {
             Remove-Item $configDir -Recurse -Force
-            Write-ColoredOutput "✅ Removed configuration directory: $configDir" "Green"
+            Write-ColoredOutput "Removed configuration directory: $configDir" "Green"
             return $true
         } catch {
-            Write-ColoredOutput "❌ Failed to remove config directory: $_" "Red"
+            Write-ColoredOutput "Failed to remove config directory: $_" "Red"
             return $false
         }
     } else {
@@ -83,10 +83,10 @@ function Remove-DesktopShortcut {
     if (Test-Path $shortcut) {
         try {
             Remove-Item $shortcut -Force
-            Write-ColoredOutput "✅ Removed desktop shortcut" "Green"
+            Write-ColoredOutput "Removed desktop shortcut" "Green"
             return $true
         } catch {
-            Write-ColoredOutput "⚠️  Could not remove desktop shortcut: $_" "Yellow"
+            Write-ColoredOutput "Could not remove desktop shortcut: $_" "Yellow"
             return $false
         }
     } else {
@@ -99,10 +99,10 @@ function Remove-BatchFile {
     if (Test-Path "proxyman.bat") {
         try {
             Remove-Item "proxyman.bat" -Force
-            Write-ColoredOutput "✅ Removed proxyman.bat" "Green"
+            Write-ColoredOutput "Removed proxyman.bat" "Green"
             return $true
         } catch {
-            Write-ColoredOutput "❌ Failed to remove batch file: $_" "Red"
+            Write-ColoredOutput "Failed to remove batch file: $_" "Red"
             return $false
         }
     } else {
@@ -117,7 +117,7 @@ function Clear-ProxySettings {
         return
     }
     
-    Write-ColoredOutput "`n🔧 Proxy Settings Cleanup" "Cyan"
+    Write-ColoredOutput "`nProxy Settings Cleanup" "Cyan"
     
     if (-not $Force) {
         $response = Read-Host "Do you want to clear all proxy settings set by ProxyMan? (y/N)"
@@ -133,16 +133,16 @@ function Clear-ProxySettings {
             $result = & python proxyman.py unset 2>&1
             
             if ($LASTEXITCODE -eq 0) {
-                Write-ColoredOutput "✅ Proxy settings cleared" "Green"
+                Write-ColoredOutput "Proxy settings cleared" "Green"
             } else {
-                Write-ColoredOutput "⚠️  Some proxy settings may not have been cleared" "Yellow"
+                Write-ColoredOutput "Some proxy settings may not have been cleared" "Yellow"
             }
         } else {
-            Write-ColoredOutput "⚠️  ProxyMan not found, cannot clear proxy settings" "Yellow"
+            Write-ColoredOutput "ProxyMan not found, cannot clear proxy settings" "Yellow"
             Write-ColoredOutput "You may need to manually clear proxy settings" "Yellow"
         }
     } catch {
-        Write-ColoredOutput "⚠️  Error clearing proxy settings: $_" "Yellow"
+        Write-ColoredOutput "Error clearing proxy settings: $_" "Yellow"
     }
 }
 
@@ -187,7 +187,7 @@ function Uninstall-ProxyMan {
         }
     }
     
-    Write-ColoredOutput "`n🚀 Starting uninstallation..." "Blue"
+    Write-ColoredOutput "`nStarting uninstallation..." "Blue"
     
     # Clear proxy settings first (optional)
     Clear-ProxySettings
@@ -206,7 +206,7 @@ function Uninstall-ProxyMan {
     Remove-DesktopShortcut
     
     # Remove batch file
-    Write-ColoredOutput "`n📄 Removing batch file..." "Blue"
+    Write-ColoredOutput "`nRemoving batch file..." "Blue"
     Remove-BatchFile
     
     Write-ColoredOutput "`n🎉 Uninstallation completed!" "Green"
@@ -219,7 +219,7 @@ function Uninstall-ProxyMan {
     Write-ColoredOutput "  • Review PowerShell profile for proxy settings" "White"
     
     if (-not (Test-AdminPrivileges)) {
-        Write-ColoredOutput "`n⚠️  Note: Some PATH changes may require administrator privileges" "Yellow"
+        Write-ColoredOutput "`nNote: Some PATH changes may require administrator privileges" "Yellow"
     }
     
     Write-ColoredOutput "`nThank you for using ProxyMan Windows!" "Green"
@@ -234,7 +234,7 @@ try {
     
     Uninstall-ProxyMan
 } catch {
-    Write-ColoredOutput "`n❌ Uninstallation failed: $_" "Red"
+    Write-ColoredOutput "`nUninstallation failed: $_" "Red"
     exit 1
 }
 

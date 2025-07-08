@@ -33,19 +33,19 @@ function Test-AdminPrivileges {
 }
 
 function Install-Dependencies {
-    Write-ColoredOutput "📦 Installing Python dependencies..." "Blue"
+    Write-ColoredOutput "Installing Python dependencies..." "Blue"
     
     try {
         $result = & python -m pip install -r requirements.txt 2>&1
         if ($LASTEXITCODE -eq 0) {
-            Write-ColoredOutput "✅ Dependencies installed successfully" "Green"
+            Write-ColoredOutput "Dependencies installed successfully" "Green"
             return $true
         } else {
-            Write-ColoredOutput "❌ Failed to install dependencies: $result" "Red"
+            Write-ColoredOutput "Failed to install dependencies: $result" "Red"
             return $false
         }
     } catch {
-        Write-ColoredOutput "❌ Error installing dependencies: $_" "Red"
+        Write-ColoredOutput "Error installing dependencies: $_" "Red"
         return $false
     }
 }

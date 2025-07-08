@@ -58,7 +58,7 @@ def remove_from_path():
             
             if new_path != current_path:
                 winreg.SetValueEx(key, "PATH", 0, winreg.REG_EXPAND_SZ, new_path)
-                print_colored("✅ Removed from user PATH", 'green')
+                print_colored("Removed from user PATH", 'green')
             else:
                 print_colored("ℹ️  Not found in user PATH", 'blue')
             
@@ -76,7 +76,7 @@ def remove_from_path():
         return True
         
     except Exception as e:
-        print_colored(f"⚠️  Could not remove from PATH: {e}", 'yellow')
+        print_colored(f"Could not remove from PATH: {e}", 'yellow')
         return False
 
 
@@ -87,10 +87,10 @@ def remove_config_files():
     if config_dir.exists():
         try:
             shutil.rmtree(config_dir)
-            print_colored(f"✅ Removed configuration directory: {config_dir}", 'green')
+            print_colored(f"Removed configuration directory: {config_dir}", 'green')
             return True
         except Exception as e:
-            print_colored(f"❌ Failed to remove config directory: {e}", 'red')
+            print_colored(f"Failed to remove config directory: {e}", 'red')
             return False
     else:
         print_colored("ℹ️  No configuration directory found", 'blue')
@@ -104,10 +104,10 @@ def remove_desktop_shortcut():
     if desktop_shortcut.exists():
         try:
             desktop_shortcut.unlink()
-            print_colored("✅ Removed desktop shortcut", 'green')
+            print_colored("Removed desktop shortcut", 'green')
             return True
         except Exception as e:
-            print_colored(f"⚠️  Could not remove desktop shortcut: {e}", 'yellow')
+            print_colored(f"Could not remove desktop shortcut: {e}", 'yellow')
             return False
     else:
         print_colored("ℹ️  No desktop shortcut found", 'blue')
@@ -121,10 +121,10 @@ def remove_batch_file():
     if batch_file.exists():
         try:
             batch_file.unlink()
-            print_colored("✅ Removed proxyman.bat", 'green')
+            print_colored("Removed proxyman.bat", 'green')
             return True
         except Exception as e:
-            print_colored(f"❌ Failed to remove batch file: {e}", 'red')
+            print_colored(f"Failed to remove batch file: {e}", 'red')
             return False
     else:
         print_colored("ℹ️  No batch file found", 'blue')
@@ -133,7 +133,7 @@ def remove_batch_file():
 
 def clear_proxy_settings():
     """Offer to clear all proxy settings"""
-    print_colored("\n🔧 Proxy Settings Cleanup", 'cyan')
+    print_colored("\nProxy Settings Cleanup", 'cyan')
     response = input("Do you want to clear all proxy settings set by ProxyMan? (y/N): ").strip().lower()
     
     if response in ['y', 'yes']:
@@ -145,14 +145,14 @@ def clear_proxy_settings():
                                       capture_output=True, text=True, timeout=30)
                 
                 if result.returncode == 0:
-                    print_colored("✅ Proxy settings cleared", 'green')
+                    print_colored("Proxy settings cleared", 'green')
                 else:
-                    print_colored("⚠️  Some proxy settings may not have been cleared", 'yellow')
+                    print_colored("Some proxy settings may not have been cleared", 'yellow')
             else:
-                print_colored("⚠️  ProxyMan not found, cannot clear proxy settings", 'yellow')
+                print_colored("ProxyMan not found, cannot clear proxy settings", 'yellow')
                 print_colored("You may need to manually clear proxy settings", 'yellow')
         except Exception as e:
-            print_colored(f"⚠️  Error clearing proxy settings: {e}", 'yellow')
+            print_colored(f"Error clearing proxy settings: {e}", 'yellow')
     else:
         print_colored("ℹ️  Proxy settings left unchanged", 'blue')
 
@@ -176,7 +176,7 @@ def main():
         print_colored("Uninstallation cancelled.", 'yellow')
         return
     
-    print_colored("\n🚀 Starting uninstallation...", 'blue')
+    print_colored("\nStarting uninstallation...", 'blue')
     
     # Clear proxy settings first (optional)
     clear_proxy_settings()
@@ -194,7 +194,7 @@ def main():
     remove_desktop_shortcut()
     
     # Remove batch file
-    print_colored("\n📄 Removing batch file...", 'blue')
+    print_colored("\nRemoving batch file...", 'blue')
     remove_batch_file()
     
     print_colored("\n🎉 Uninstallation completed!", 'green')
@@ -207,7 +207,7 @@ def main():
     print_colored("  • Review PowerShell profile for proxy settings", 'white')
     
     if not is_admin():
-        print_colored("\n⚠️  Note: Some PATH changes may require administrator privileges", 'yellow')
+        print_colored("\nNote: Some PATH changes may require administrator privileges", 'yellow')
     
     print_colored("\nThank you for using ProxyMan Windows!", 'green')
 
@@ -219,5 +219,5 @@ if __name__ == "__main__":
         print_colored("\n\nUninstallation cancelled by user", 'yellow')
         sys.exit(1)
     except Exception as e:
-        print_colored(f"\n❌ Uninstallation failed: {e}", 'red')
+        print_colored(f"\nUninstallation failed: {e}", 'red')
         sys.exit(1)

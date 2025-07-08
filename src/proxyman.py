@@ -79,7 +79,7 @@ class ProxyManager:
             config['ftp_host'] = config['http_host']
             config['ftp_port'] = config['http_port']
         else:
-            print_colored("🔒 HTTPS Proxy Settings", self.colors['cyan'])
+            print_colored("HTTPS Proxy Settings", self.colors['cyan'])
             config['https_host'] = get_user_input("HTTPS Proxy Host", config['http_host'])
             https_port = get_user_input("HTTPS Proxy Port", str(config['http_port']))
             try:
@@ -118,7 +118,7 @@ class ProxyManager:
         print_colored("  0. All targets", self.colors['white'])
         for i, target in enumerate(targets, 1):
             description = self.target_descriptions.get(target, target)
-            available = "✅" if target in self.available_targets else "❌"
+            available = "[OK]" if target in self.available_targets else "[UNAVAILABLE]"
             print_colored(f"  {i}. {available} {target} - {description}", self.colors['white'])
         
         # Get user selection
@@ -324,7 +324,7 @@ class ProxyManager:
 """
         
         for name, description in self.target_descriptions.items():
-            available = "✅" if name in self.available_targets else "❌"
+            available = "[OK]" if name in self.available_targets else "[UNAVAILABLE]"
             print_colored(f"  {available} {name:12} - {description}", self.colors['white'])
         
         print(help_text)
