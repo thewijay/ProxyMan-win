@@ -29,8 +29,8 @@ A Windows port of the Linux ProxyMan proxy management tool, built with Python.
 
 ```powershell
 # Download or clone the repository
-git clone https://github.com/your-username/proxyman-windows.git
-cd proxyman-windows
+git clone https://github.com/thewijay/ProxyMan-win.git
+cd ProxyMan-win
 
 # Run the Python installer
 python install.py

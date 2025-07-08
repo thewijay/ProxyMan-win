@@ -330,7 +330,7 @@ class ProxyManager:
         print(help_text)
         
         print_colored(f"\n{self.colors['bold']}Note:{self.colors['reset']} Some operations require administrator privileges")
-        print_colored(f"Repository: https://github.com/your-username/proxyman-windows", self.colors['blue'])
+        print_colored(f"Repository: https://github.com/thewijay/ProxyMan-win", self.colors['blue'])
     
     def _detect_active_profile(self) -> Optional[str]:
         """Detect which saved profile matches the current proxy settings."""
