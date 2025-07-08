@@ -8,6 +8,7 @@ import sys
 import subprocess
 import ctypes
 import signal
+import time
 from typing import Dict, Any
 from colorama import init, Fore, Back, Style
 
@@ -149,40 +150,10 @@ def get_user_input(prompt: str, default: str = None, password: bool = False) -> 
             import getpass
             result = getpass.getpass(display_prompt)
         else:
-            # Flush all output streams
+            # Simple approach - just use input with proper flushing
             sys.stdout.flush()
             sys.stderr.flush()
-            
-            # Use a timeout-based approach on Windows to prevent hanging
-            if os.name == 'nt':  # Windows
-                # Try using threading with timeout to prevent infinite hang
-                import threading
-                import queue
-                
-                input_queue = queue.Queue()
-                
-                def get_input():
-                    try:
-                        result = input(display_prompt)
-                        input_queue.put(result)
-                    except Exception as e:
-                        input_queue.put(f"ERROR:{e}")
-                
-                input_thread = threading.Thread(target=get_input, daemon=True)
-                input_thread.start()
-                
-                try:
-                    # Wait for input with a reasonable timeout
-                    result = input_queue.get(timeout=30)
-                    if result.startswith("ERROR:"):
-                        raise Exception(result[6:])
-                    result = result.strip()
-                except queue.Empty:
-                    print_colored("\n\nInput timeout - using default value", get_colors()['yellow'])
-                    result = ""
-            else:
-                # On non-Windows, use normal input
-                result = input(display_prompt).strip()
+            result = input(display_prompt).strip()
         
         return result if result else (default or '')
     except KeyboardInterrupt:
@@ -201,40 +172,9 @@ def get_yes_no_input(prompt: str, default: bool = False) -> bool:
     default_str = "Y/n" if default else "y/N"
     
     try:
-        # Use the same timeout approach as get_user_input
-        full_prompt = f"{prompt} [{default_str}]: "
-        
-        if os.name == 'nt':  # Windows
-            import threading
-            import queue
-            
-            input_queue = queue.Queue()
-            
-            def get_input():
-                try:
-                    sys.stdout.flush()
-                    sys.stderr.flush()
-                    result = input(full_prompt)
-                    input_queue.put(result)
-                except Exception as e:
-                    input_queue.put(f"ERROR:{e}")
-            
-            input_thread = threading.Thread(target=get_input, daemon=True)
-            input_thread.start()
-            
-            try:
-                result = input_queue.get(timeout=30)
-                if result.startswith("ERROR:"):
-                    raise Exception(result[6:])
-                response = result.strip().lower()
-            except queue.Empty:
-                print_colored("\n\nInput timeout - using default value", get_colors()['yellow'])
-                response = ""
-        else:
-            # On non-Windows, use normal input
-            sys.stdout.flush()
-            sys.stderr.flush()
-            response = input(full_prompt).strip().lower()
+        sys.stdout.flush()
+        sys.stderr.flush()
+        response = input(f"{prompt} [{default_str}]: ").strip().lower()
         
         if not response:
             return default
