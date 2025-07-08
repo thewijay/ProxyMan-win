@@ -19,18 +19,20 @@ def setup_signal_handlers():
     """Setup signal handlers for graceful shutdown."""
     def signal_handler(signum, frame):
         print_colored("\n\nOperation interrupted by user", get_colors()['yellow'])
-        # Force exit to ensure the program terminates
-        os._exit(0)
+        # Use sys.exit instead of os._exit to allow cleanup
+        sys.exit(0)
     
     try:
-        # Setup signal handlers
-        signal.signal(signal.SIGINT, signal_handler)
-        if hasattr(signal, 'SIGTERM'):
-            signal.signal(signal.SIGTERM, signal_handler)
-        
-        # On Windows, also handle SIGBREAK
-        if hasattr(signal, 'SIGBREAK'):
-            signal.signal(signal.SIGBREAK, signal_handler)
+        # On Windows, be more conservative with signal handling
+        # as it can interfere with input() function
+        if os.name == 'nt':  # Windows
+            # Only handle SIGINT (Ctrl+C) on Windows
+            signal.signal(signal.SIGINT, signal_handler)
+        else:
+            # On non-Windows systems, handle more signals
+            signal.signal(signal.SIGINT, signal_handler)
+            if hasattr(signal, 'SIGTERM'):
+                signal.signal(signal.SIGTERM, signal_handler)
     except Exception:
         # If signal setup fails, continue without it
         pass
@@ -147,15 +149,45 @@ def get_user_input(prompt: str, default: str = None, password: bool = False) -> 
             import getpass
             result = getpass.getpass(display_prompt)
         else:
-            # Flush stdout to ensure prompt is visible
+            # Flush all output streams
             sys.stdout.flush()
-            result = input(display_prompt).strip()
+            sys.stderr.flush()
+            
+            # Use a timeout-based approach on Windows to prevent hanging
+            if os.name == 'nt':  # Windows
+                # Try using threading with timeout to prevent infinite hang
+                import threading
+                import queue
+                
+                input_queue = queue.Queue()
+                
+                def get_input():
+                    try:
+                        result = input(display_prompt)
+                        input_queue.put(result)
+                    except Exception as e:
+                        input_queue.put(f"ERROR:{e}")
+                
+                input_thread = threading.Thread(target=get_input, daemon=True)
+                input_thread.start()
+                
+                try:
+                    # Wait for input with a reasonable timeout
+                    result = input_queue.get(timeout=30)
+                    if result.startswith("ERROR:"):
+                        raise Exception(result[6:])
+                    result = result.strip()
+                except queue.Empty:
+                    print_colored("\n\nInput timeout - using default value", get_colors()['yellow'])
+                    result = ""
+            else:
+                # On non-Windows, use normal input
+                result = input(display_prompt).strip()
         
         return result if result else (default or '')
     except KeyboardInterrupt:
         print_colored("\n\nOperation cancelled by user", get_colors()['yellow'])
-        # Force exit to prevent hanging
-        os._exit(1)
+        sys.exit(1)
     except EOFError:
         print_colored("\n\nInput terminated", get_colors()['yellow'])
         return default or ''
@@ -169,9 +201,40 @@ def get_yes_no_input(prompt: str, default: bool = False) -> bool:
     default_str = "Y/n" if default else "y/N"
     
     try:
-        # Flush stdout to ensure prompt is visible
-        sys.stdout.flush()
-        response = input(f"{prompt} [{default_str}]: ").strip().lower()
+        # Use the same timeout approach as get_user_input
+        full_prompt = f"{prompt} [{default_str}]: "
+        
+        if os.name == 'nt':  # Windows
+            import threading
+            import queue
+            
+            input_queue = queue.Queue()
+            
+            def get_input():
+                try:
+                    sys.stdout.flush()
+                    sys.stderr.flush()
+                    result = input(full_prompt)
+                    input_queue.put(result)
+                except Exception as e:
+                    input_queue.put(f"ERROR:{e}")
+            
+            input_thread = threading.Thread(target=get_input, daemon=True)
+            input_thread.start()
+            
+            try:
+                result = input_queue.get(timeout=30)
+                if result.startswith("ERROR:"):
+                    raise Exception(result[6:])
+                response = result.strip().lower()
+            except queue.Empty:
+                print_colored("\n\nInput timeout - using default value", get_colors()['yellow'])
+                response = ""
+        else:
+            # On non-Windows, use normal input
+            sys.stdout.flush()
+            sys.stderr.flush()
+            response = input(full_prompt).strip().lower()
         
         if not response:
             return default
@@ -179,8 +242,7 @@ def get_yes_no_input(prompt: str, default: bool = False) -> bool:
         return response in ['y', 'yes', '1', 'true']
     except KeyboardInterrupt:
         print_colored("\n\nOperation cancelled by user", get_colors()['yellow'])
-        # Force exit to prevent hanging
-        os._exit(1)
+        sys.exit(1)
     except EOFError:
         print_colored("\n\nInput terminated", get_colors()['yellow'])
         return default
