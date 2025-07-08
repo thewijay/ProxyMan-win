@@ -25,15 +25,36 @@ A Windows port of the Linux ProxyMan proxy management tool, built with Python.
 
 ## Installation
 
-1. Clone or download this repository
-2. Install required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Run the installer:
-   ```bash
-   python install.py
-   ```
+### Option 1: Simple Installation (Recommended)
+
+```powershell
+# Download or clone the repository
+git clone https://github.com/your-username/proxyman-windows.git
+cd proxyman-windows
+
+# Run the Python installer
+python install.py
+```
+
+### Option 2: PowerShell Installation
+
+```powershell
+# Simple PowerShell installer (recommended):
+.\install-simple.ps1
+
+# Or the full PowerShell installer:
+.\install.ps1
+```
+
+### Option 3: Manual Installation
+
+```powershell
+# Install dependencies
+pip install -r requirements.txt
+
+# Use the batch file to run the tool
+.\proxyman.bat help
+```
 
 ## Uninstallation
 
