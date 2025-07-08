@@ -74,12 +74,17 @@ class SystemProxyTarget(ProxyTarget):
         self.reg_path = r"Software\Microsoft\Windows\CurrentVersion\Internet Settings"
     
     def is_available(self) -> bool:
-        """System proxy is always available on Windows."""
-        return True
+        """System proxy is only available on Windows."""
+        return platform.system() == "Windows"
     
     def set_proxy(self, config: Dict[str, Any]) -> bool:
         """Set system proxy settings."""
         try:
+            # Check if we're on Windows
+            if platform.system() != "Windows":
+                print_warning("System proxy settings are only available on Windows")
+                return False
+            
             # Open registry key
             key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, self.reg_path, 0, winreg.KEY_SET_VALUE)
             
@@ -141,6 +146,10 @@ class SystemProxyTarget(ProxyTarget):
     def list_proxy(self) -> Optional[Dict[str, Any]]:
         """List current system proxy settings."""
         try:
+            # Check if we're on Windows
+            if platform.system() != "Windows":
+                return None
+            
             key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, self.reg_path, 0, winreg.KEY_READ)
             
             try:
