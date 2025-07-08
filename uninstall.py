@@ -134,7 +134,14 @@ def remove_batch_file():
 def clear_proxy_settings():
     """Offer to clear all proxy settings"""
     print_colored("\nProxy Settings Cleanup", 'cyan')
-    response = input("Do you want to clear all proxy settings set by ProxyMan? (y/N): ").strip().lower()
+    try:
+        response = input("Do you want to clear all proxy settings set by ProxyMan? (y/N): ").strip().lower()
+    except KeyboardInterrupt:
+        print_colored("\n\nOperation cancelled by user", 'yellow')
+        return
+    except EOFError:
+        print_colored("\n\nInput terminated", 'yellow')
+        return
     
     if response in ['y', 'yes']:
         try:
@@ -170,7 +177,14 @@ def main():
     print_colored("  • PATH environment variable entries", 'white')
     print_colored("  • Desktop shortcuts", 'white')
     
-    response = input("\nDo you want to continue? (y/N): ").strip().lower()
+    try:
+        response = input("\nDo you want to continue? (y/N): ").strip().lower()
+    except KeyboardInterrupt:
+        print_colored("\n\nOperation cancelled by user", 'yellow')
+        return
+    except EOFError:
+        print_colored("\n\nInput terminated", 'yellow')
+        return
     
     if response not in ['y', 'yes']:
         print_colored("Uninstallation cancelled.", 'yellow')

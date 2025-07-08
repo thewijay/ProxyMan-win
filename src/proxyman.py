@@ -383,6 +383,10 @@ class ProxyManager:
 
 def main():
     """Main entry point."""
+    # Setup signal handlers for graceful Ctrl+C handling
+    from utils import setup_signal_handlers
+    setup_signal_handlers()
+    
     try:
         manager = ProxyManager()
         
