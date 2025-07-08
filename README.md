@@ -39,10 +39,15 @@ python install.py
 ### Option 2: PowerShell Installation
 
 ```powershell
-# Simple PowerShell installer (recommended):
-.\install-simple.ps1
+# Quick installation (recommended):
+.\install.ps1 -Simple
 
-# Or the full PowerShell installer:
+# Advanced installation with options:
+.\install.ps1 -SystemWide    # System-wide installation (requires admin)
+.\install.ps1 -UserOnly      # User-only installation
+.\install.ps1 -SkipPath      # Don't add to PATH
+
+# Standard installation:
 .\install.ps1
 ```
 
@@ -171,8 +176,7 @@ ProxyMan-win/
 │   ├── targets.py         # Proxy target handlers
 │   └── utils.py           # Utility functions
 ├── install.py             # Python installer
-├── install.ps1            # PowerShell installer
-├── install-simple.ps1     # Simple PowerShell installer
+├── install.ps1            # Unified PowerShell installer
 ├── uninstall.py           # Python uninstaller
 ├── uninstall.ps1          # PowerShell uninstaller
 ├── proxyman.py            # Main entry point

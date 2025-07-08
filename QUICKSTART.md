@@ -16,10 +16,10 @@ python install.py
 ### Option 2: PowerShell Installation
 
 ```powershell
-# Simple PowerShell installer (recommended):
-.\install-simple.ps1
+# Quick installation (recommended):
+.\install.ps1 -Simple
 
-# Or the full PowerShell installer:
+# Standard installation:
 .\install.ps1
 ```
 
@@ -178,7 +178,8 @@ proxyman delete office_proxy
 **Error: "SyntaxError: unterminated string literal" when running install.ps1**
 
 - You're running a PowerShell script with Python
-- Use PowerShell: `.\install.ps1` or `.\install-simple.ps1` (not `python install.ps1`)
+- Use PowerShell: `.\install.ps1` (not `python install.ps1`)
+- For quick install: `.\install.ps1 -Simple`
 - Or use the Python installer: `python install.py`
 
 **Error: "ImportError: attempted relative import with no known parent package"**

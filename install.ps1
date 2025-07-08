@@ -1,29 +1,30 @@
 # ProxyMan Windows - PowerShell Installation Script
-# Alternative installation method using PowerShell
+# Unified installer with both simple and advanced options
 
 param(
     [switch]$SystemWide,
     [switch]$UserOnly,
     [switch]$SkipPath,
+    [switch]$Simple,
+    [switch]$Help,
     [string]$InstallPath = $null
 )
 
 # Colors for output
-$colors = @{
-    Red = "Red"
-    Green = "Green"
-    Yellow = "Yellow"
-    Blue = "Blue"
-    Cyan = "Cyan"
-    White = "White"
-}
-
 function Write-ColoredOutput {
     param(
         [string]$Message,
         [string]$Color = "White"
     )
-    Write-Host $Message -ForegroundColor $colors[$Color]
+    
+    switch ($Color) {
+        "Red" { Write-Host $Message -ForegroundColor Red }
+        "Green" { Write-Host $Message -ForegroundColor Green }
+        "Yellow" { Write-Host $Message -ForegroundColor Yellow }
+        "Blue" { Write-Host $Message -ForegroundColor Blue }
+        "Cyan" { Write-Host $Message -ForegroundColor Cyan }
+        default { Write-Host $Message }
+    }
 }
 
 function Test-AdminPrivileges {
@@ -38,20 +39,21 @@ function Install-Dependencies {
     try {
         $result = & python -m pip install -r requirements.txt 2>&1
         if ($LASTEXITCODE -eq 0) {
-            Write-ColoredOutput "Dependencies installed successfully" "Green"
+            Write-ColoredOutput "✅ Dependencies installed successfully" "Green"
             return $true
         } else {
-            Write-ColoredOutput "Failed to install dependencies: $result" "Red"
+            Write-ColoredOutput "❌ Failed to install dependencies: $result" "Red"
             return $false
         }
     } catch {
-        Write-ColoredOutput "Error installing dependencies: $_" "Red"
+        Write-ColoredOutput "❌ Error installing dependencies: $_" "Red"
         return $false
     }
 }
+}
 
 function Create-BatchFile {
-    Write-ColoredOutput "📄 Creating batch file..." "Blue"
+    Write-ColoredOutput "Creating batch file..." "Blue"
     
     $batchContent = @'
 @echo off
@@ -95,7 +97,7 @@ function Add-ToPath {
         $currentPath = [Environment]::GetEnvironmentVariable("PATH", $target)
         
         if ($currentPath -notlike "*$Path*") {
-            $newPath = "$currentPath;$Path"
+            $newPath = if ($currentPath) { "$currentPath;$Path" } else { $Path }
             [Environment]::SetEnvironmentVariable("PATH", $newPath, $target)
             Write-ColoredOutput "✅ Added to $scope PATH" "Green"
         } else {
@@ -109,8 +111,29 @@ function Add-ToPath {
     }
 }
 
+function Create-DesktopShortcut {
+    try {
+        $WshShell = New-Object -comObject WScript.Shell
+        $Shortcut = $WshShell.CreateShortcut("$env:USERPROFILE\Desktop\ProxyMan.lnk")
+        $Shortcut.TargetPath = "$PWD\proxyman.bat"
+        $Shortcut.WorkingDirectory = "$PWD"
+        $Shortcut.Description = "ProxyMan Windows - Proxy Configuration Tool"
+        $Shortcut.Save()
+        Write-ColoredOutput "✅ Created desktop shortcut" "Green"
+        return $true
+    } catch {
+        Write-ColoredOutput "⚠️  Could not create desktop shortcut: $_" "Yellow"
+        return $false
+    }
+}
+
 function Install-ProxyMan {
+    param([bool]$SimpleMode = $false)
+    
     Write-ColoredOutput "🚀 ProxyMan Windows PowerShell Installer" "Cyan"
+    if ($SimpleMode) {
+        Write-ColoredOutput "Running in simple mode..." "Yellow"
+    }
     Write-ColoredOutput "=" * 50 "Cyan"
     
     # Check Python version
@@ -141,35 +164,38 @@ function Install-ProxyMan {
     if (-not $SkipPath) {
         $currentDir = Get-Location
         
-        if ($SystemWide) {
-            Add-ToPath -Path $currentDir -SystemWide $true
+        if ($SimpleMode) {
+            # Simple mode: just add to user PATH
+            Add-ToPath -Path $currentDir.Path -SystemWide $false
         } else {
-            Add-ToPath -Path $currentDir -SystemWide $false
+            # Advanced mode: respect SystemWide parameter
+            if ($SystemWide) {
+                Add-ToPath -Path $currentDir.Path -SystemWide $true
+            } else {
+                Add-ToPath -Path $currentDir.Path -SystemWide $false
+            }
         }
     }
     
-    # Create desktop shortcut
-    if ($SystemWide -or $UserOnly) {
-        try {
-            $WshShell = New-Object -comObject WScript.Shell
-            $Shortcut = $WshShell.CreateShortcut("$env:USERPROFILE\Desktop\ProxyMan.lnk")
-            $Shortcut.TargetPath = "$PWD\proxyman.bat"
-            $Shortcut.WorkingDirectory = "$PWD"
-            $Shortcut.Description = "ProxyMan Windows - Proxy Configuration Tool"
-            $Shortcut.Save()
-            Write-ColoredOutput "✅ Created desktop shortcut" "Green"
-        } catch {
-            Write-ColoredOutput "⚠️  Could not create desktop shortcut: $_" "Yellow"
-        }
+    # Create desktop shortcut (only in advanced mode unless specifically requested)
+    if ((-not $SimpleMode) -and ($SystemWide -or $UserOnly)) {
+        Create-DesktopShortcut
     }
     
     Write-ColoredOutput "`n🎉 Installation completed!" "Green"
     Write-ColoredOutput "You can now use ProxyMan with:" "Cyan"
-    Write-ColoredOutput "  proxyman help" "White"
-    Write-ColoredOutput "  proxyman set" "White"
-    Write-ColoredOutput "  proxyman list" "White"
     
-    if (-not (Test-AdminPrivileges) -and -not $SkipPath) {
+    if ($SkipPath) {
+        Write-ColoredOutput "  .\proxyman.bat help" "White"
+        Write-ColoredOutput "  .\proxyman.bat set" "White"
+        Write-ColoredOutput "  .\proxyman.bat list" "White"
+    } else {
+        Write-ColoredOutput "  proxyman help" "White"
+        Write-ColoredOutput "  proxyman set" "White"
+        Write-ColoredOutput "  proxyman list" "White"
+    }
+    
+    if (-not (Test-AdminPrivileges) -and (-not $SkipPath) -and (-not $SimpleMode)) {
         Write-ColoredOutput "`n⚠️  Note: Run as administrator for system-wide installation" "Yellow"
     }
     
@@ -183,25 +209,27 @@ function Show-Help {
     Write-ColoredOutput "  .\install.ps1 [options]" "White"
     Write-ColoredOutput ""
     Write-ColoredOutput "Options:" "White"
+    Write-ColoredOutput "  -Simple        Quick installation (user PATH only)" "White"
     Write-ColoredOutput "  -SystemWide    Install system-wide (requires admin)" "White"
     Write-ColoredOutput "  -UserOnly      Install for current user only" "White"
     Write-ColoredOutput "  -SkipPath      Skip adding to PATH" "White"
-    Write-ColoredOutput "  -InstallPath   Custom installation path" "White"
+    Write-ColoredOutput "  -Help          Show this help message" "White"
     Write-ColoredOutput ""
     Write-ColoredOutput "Examples:" "White"
     Write-ColoredOutput "  .\install.ps1                    # Standard installation" "White"
+    Write-ColoredOutput "  .\install.ps1 -Simple            # Quick installation" "White"
     Write-ColoredOutput "  .\install.ps1 -SystemWide        # System-wide installation" "White"
     Write-ColoredOutput "  .\install.ps1 -UserOnly -SkipPath # User-only, no PATH" "White"
 }
 
 # Main execution
 try {
-    if ($args -contains "-help" -or $args -contains "--help" -or $args -contains "-h") {
+    if ($Help -or $args -contains "-help" -or $args -contains "--help" -or $args -contains "-h") {
         Show-Help
         exit 0
     }
     
-    $success = Install-ProxyMan
+    $success = Install-ProxyMan -SimpleMode $Simple
     if (-not $success) {
         exit 1
     }
