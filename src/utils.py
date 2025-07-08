@@ -8,7 +8,6 @@ import sys
 import subprocess
 import ctypes
 import signal
-import time
 from typing import Dict, Any
 from colorama import init, Fore, Back, Style
 
