@@ -9,21 +9,33 @@ import shutil
 import subprocess
 from pathlib import Path
 
+# Initialize colorama for Windows color support
+try:
+    from colorama import init, Fore, Style
+    init(autoreset=True, convert=True, strip=False)  # Force color conversion on Windows
+    COLORAMA_AVAILABLE = True
+except ImportError:
+    COLORAMA_AVAILABLE = False
+
 
 def print_colored(text, color=None):
-    """Print colored text (simple version without colorama)"""
+    """Print colored text using colorama for cross-platform support"""
+    if not COLORAMA_AVAILABLE:
+        print(text)
+        return
+        
     colors = {
-        'red': '\033[91m',
-        'green': '\033[92m',
-        'yellow': '\033[93m',
-        'blue': '\033[94m',
-        'cyan': '\033[96m',
-        'white': '\033[97m',
-        'reset': '\033[0m'
+        'red': Fore.RED,
+        'green': Fore.GREEN,
+        'yellow': Fore.YELLOW,
+        'blue': Fore.BLUE,
+        'cyan': Fore.CYAN,
+        'white': Fore.WHITE,
+        'magenta': Fore.MAGENTA
     }
     
     if color and color in colors:
-        print(f"{colors[color]}{text}{colors['reset']}")
+        print(f"{colors[color]}{text}")
     else:
         print(text)
 
