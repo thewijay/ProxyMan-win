@@ -217,6 +217,10 @@ def main():
         print_colored("  proxymanx help", 'white')
         print_colored("  proxymanx set", 'white')
         print_colored("  proxymanx list", 'white')
+        print_colored("\n📝 Note: If 'proxymanx' command is not recognized:", 'yellow')
+        print_colored("  • Close and reopen your terminal/PowerShell", 'white')
+        print_colored("  • Or run: .\\refresh_path.bat to refresh PATH", 'white')
+        print_colored("  • Or use: .\\proxymanx.bat as a temporary workaround", 'white')
     else:
         print_colored("Manual usage instructions:", 'cyan')
         print_colored("  python proxymanx.py help", 'white')
