@@ -187,6 +187,15 @@ ProxyManX/
 └── README.md              # This file
 ```
 
+## Acknowledgments
+
+This project is inspired by and based on the original [ProxyMan for Linux](https://github.com/himanshub16/ProxyMan) by Himanshu Shekhar. ProxyManX extends the concept to provide comprehensive Windows proxy management with enhanced features and professional tooling.
+
+Original ProxyMan project:
+- **Repository**: https://github.com/himanshub16/ProxyMan
+- **Author**: Himanshu Shekhar
+- **License**: MIT License
+
 ## License
 
 MIT License
