@@ -194,6 +194,10 @@ class ProxyManX:
                     print_error(f"Failed to clear {target_name} proxy")
             except Exception as e:
                 print_error(f"Error clearing {target_name}: {e}")
+        
+        # Clear active profile when unsetting proxy
+        self.config_manager.clear_active_profile()
+        print_colored("Active profile cleared", self.colors['yellow'])
     
     def list_proxy_settings(self) -> None:
         """List saved proxy profiles and current active configuration."""
@@ -244,6 +248,10 @@ class ProxyManX:
         
         # Apply settings
         self._apply_proxy_settings(config, targets)
+        
+        # Track this as the active profile
+        self.config_manager.set_active_profile(config_name)
+        print_colored(f"Profile '{config_name}' is now active", self.colors['green'])
     
     def _show_config_details(self, config: Dict[str, Any]) -> None:
         """Show configuration details."""
@@ -342,7 +350,13 @@ class ProxyManX:
         print_colored(f"Repository: https://github.com/thewijay/ProxyManX", self.colors['blue'])
     
     def _detect_active_profile(self) -> Optional[str]:
-        """Detect which saved profile matches the current proxy settings."""
+        """Detect which saved profile is currently active."""
+        # First, check if we have a tracked active profile
+        active_profile = self.config_manager.get_active_profile()
+        if active_profile:
+            return active_profile
+        
+        # Fallback to environment variable detection (legacy method)
         try:
             # Get current proxy settings from environment (most common case)
             current_http_proxy = os.environ.get('HTTP_PROXY') or os.environ.get('http_proxy')
@@ -381,6 +395,8 @@ class ProxyManX:
                     # Compare host and port
                     if (config.get('http_host') == current_host and 
                         config.get('http_port') == current_port):
+                        # Update the tracked active profile
+                        self.config_manager.set_active_profile(config_name)
                         return config_name
             
             return None

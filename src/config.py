@@ -180,3 +180,38 @@ class ConfigManager:
         
         print_colored("\n" + "=" * 60, self.colors['cyan'])
         print_colored("Use 'proxymanx list' to see available profiles", self.colors['cyan'])
+    
+    def set_active_profile(self, profile_name: str) -> None:
+        """Set the currently active profile."""
+        try:
+            state_file = self.config_dir / '.active_profile'
+            with open(state_file, 'w') as f:
+                f.write(profile_name)
+        except Exception as e:
+            print_colored(f"Warning: Could not save active profile state: {e}", self.colors['yellow'])
+    
+    def get_active_profile(self) -> Optional[str]:
+        """Get the currently active profile."""
+        try:
+            state_file = self.config_dir / '.active_profile'
+            if state_file.exists():
+                with open(state_file, 'r') as f:
+                    profile_name = f.read().strip()
+                    # Verify the profile still exists
+                    if profile_name in self.list_configs():
+                        return profile_name
+                    else:
+                        # Profile was deleted, clear the state
+                        self.clear_active_profile()
+            return None
+        except Exception:
+            return None
+    
+    def clear_active_profile(self) -> None:
+        """Clear the active profile state."""
+        try:
+            state_file = self.config_dir / '.active_profile'
+            if state_file.exists():
+                state_file.unlink()
+        except Exception:
+            pass
