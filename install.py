@@ -37,21 +37,56 @@ def is_admin():
         return False
 
 
+def print_header():
+    """Print professional installation header"""
+    print()
+    print_colored("╔" + "═" * 50 + "╗", 'cyan')
+    print_colored("║" + " " * 12 + "ProxyManX Windows Installer" + " " * 11 + "║", 'cyan')
+    print_colored("║" + " " * 12 + "Professional Proxy Management" + " " * 9 + "║", 'cyan')
+    print_colored("╚" + "═" * 50 + "╝", 'cyan')
+    print()
+
+
+def print_section(title):
+    """Print section header"""
+    print()
+    print_colored(f"▶ {title}", 'blue')
+    print_colored("─" * (len(title) + 2), 'blue')
+
+
+def print_success(message):
+    """Print success message with checkmark"""
+    print_colored(f"  ✓ {message}", 'green')
+
+
+def print_error(message):
+    """Print error message with X mark"""
+    print_colored(f"  ✗ {message}", 'red')
+
+
+def print_info(message):
+    """Print info message with bullet"""
+    print_colored(f"  • {message}", 'white')
+
+
 def install_dependencies():
     """Install Python dependencies"""
-    print_colored("Installing dependencies...", 'blue')
+    print_section("Installing Dependencies")
     
     try:
+        print_info("Checking and installing required packages...")
         subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
-        print_colored("Dependencies installed successfully", 'green')
+        print_success("All dependencies installed successfully")
         return True
     except subprocess.CalledProcessError as e:
-        print_colored(f"Failed to install dependencies: {e}", 'red')
+        print_error(f"Failed to install dependencies: {e}")
         return False
 
 
 def create_batch_file():
     """Create batch file for easy execution"""
+    print_section("Creating Launcher")
+    
     batch_content = f"""@echo off
 cd /d "%~dp0"
 python proxymanx.py %*
@@ -60,28 +95,32 @@ python proxymanx.py %*
     try:
         with open('proxymanx.bat', 'w') as f:
             f.write(batch_content)
-        print_colored("Created proxymanx.bat", 'green')
+        print_success("Created proxymanx.bat launcher")
         return True
     except Exception as e:
-        print_colored(f"Failed to create batch file: {e}", 'red')
+        print_error(f"Failed to create batch file: {e}")
         return False
 
 
 def add_to_path():
     """Add current directory to PATH"""
+    print_section("Configuring System PATH")
+    
     current_dir = os.path.dirname(os.path.abspath(__file__))
     
     # Check if we're on Windows
     if os.name != 'nt':
-        print_colored("PATH modification only supported on Windows", 'yellow')
-        print_colored("You can still run ProxyManX using:", 'cyan')
-        print_colored(f"  python {os.path.join(current_dir, 'proxymanx.py')}", 'white')
-        print_colored(f"  or {os.path.join(current_dir, 'proxymanx.bat')}", 'white')
+        print_error("PATH modification only supported on Windows")
+        print_info("You can still run ProxyManX using:")
+        print_info(f"python {os.path.join(current_dir, 'proxymanx.py')}")
+        print_info(f"{os.path.join(current_dir, 'proxymanx.bat')}")
         return False
     
     try:
         # Try to add to user PATH first (no admin required)
         import winreg
+        
+        print_info(f"Adding directory to PATH: {current_dir}")
         
         # Open the registry key for user environment variables
         key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment", 0, winreg.KEY_SET_VALUE | winreg.KEY_READ)
@@ -96,9 +135,9 @@ def add_to_path():
         if current_dir not in current_path:
             new_path = f"{current_path};{current_dir}" if current_path else current_dir
             winreg.SetValueEx(key, "PATH", 0, winreg.REG_EXPAND_SZ, new_path)
-            print_colored("Added to user PATH", 'green')
+            print_success("Added to user PATH")
         else:
-            print_colored("Already in user PATH", 'green')
+            print_success("Already in user PATH")
         
         winreg.CloseKey(key)
         
@@ -189,15 +228,16 @@ def add_to_path():
 
 def main():
     """Main installation function"""
-    print_colored("ProxyManX Windows Installer", 'cyan')
-    print_colored("=" * 40, 'cyan')
+    print_header()
     
     # Check Python version
+    print_section("System Requirements Check")
     if sys.version_info < (3, 7):
-        print_colored("Python 3.7 or higher is required", 'red')
+        print_error("Python 3.7 or higher is required")
+        print_info(f"Current version: {sys.version_info.major}.{sys.version_info.minor}")
         return False
     
-    print_colored(f"Python {sys.version_info.major}.{sys.version_info.minor} detected", 'green')
+    print_success(f"Python {sys.version_info.major}.{sys.version_info.minor} detected")
     
     # Install dependencies
     if not install_dependencies():
@@ -210,27 +250,43 @@ def main():
     # Add to PATH
     path_success = add_to_path()
     
-    print_colored("\nInstallation completed!", 'green')
+    # Final success message
+    print()
+    print_colored("╔" + "═" * 50 + "╗", 'green')
+    print_colored("║" + " " * 15 + "Installation Completed!" + " " * 14 + "║", 'green')
+    print_colored("╚" + "═" * 50 + "╝", 'green')
+    print()
     
     if path_success:
-        print_colored("You can now use ProxyManX with:", 'cyan')
-        print_colored("  proxymanx help", 'white')
-        print_colored("  proxymanx set", 'white')
-        print_colored("  proxymanx list", 'white')
-        print_colored("\n📝 Note: If 'proxymanx' command is not recognized:", 'yellow')
-        print_colored("  • Close and reopen your terminal/PowerShell", 'white')
-        print_colored("  • Or run: .\\refresh_path.bat to refresh PATH", 'white')
-        print_colored("  • Or use: .\\proxymanx.bat as a temporary workaround", 'white')
+        print_colored("ProxyManX is ready to use!", 'cyan')
+        print()
+        print_colored("Available commands:", 'white')
+        print_info("proxymanx help     - Show all available commands")
+        print_info("proxymanx set      - Configure proxy settings")
+        print_info("proxymanx list     - Show current proxy status")
+        print_info("proxymanx save     - Save current configuration")
+        print()
+        print_colored("If 'proxymanx' command is not recognized:", 'yellow')
+        print_info("Close and reopen your terminal/PowerShell")
+        print_info("Or run: .\\refresh_path.bat to refresh PATH")
+        print_info("Or use: .\\proxymanx.bat as a temporary workaround")
     else:
-        print_colored("Manual usage instructions:", 'cyan')
-        print_colored("  python proxymanx.py help", 'white')
-        print_colored("  .\\proxymanx.bat help", 'white')
-        print_colored("\nTo add to PATH manually:", 'yellow')
-        print_colored("  1. Open Environment Variables in System Properties", 'white')
-        print_colored(f"  2. Add this path to your user PATH: {os.path.dirname(os.path.abspath(__file__))}", 'white')
+        print_colored("Manual Usage Instructions:", 'cyan')
+        print()
+        print_info("python proxymanx.py help")
+        print_info(".\\proxymanx.bat help")
+        print()
+        print_colored("To add to PATH manually:", 'yellow')
+        print_info("1. Open Environment Variables in System Properties")
+        print_info(f"2. Add this path to your user PATH:")
+        print_colored(f"   {os.path.dirname(os.path.abspath(__file__))}", 'white')
     
+    print()
     if not is_admin():
-        print_colored("\nNote: Run as administrator for full functionality", 'yellow')
+        print_colored("Tip: Run as administrator for enhanced functionality", 'yellow')
+    
+    print_colored("Thank you for installing ProxyManX!", 'cyan')
+    print()
     
     return True
 
