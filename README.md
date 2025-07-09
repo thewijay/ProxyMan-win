@@ -1,3 +1,5 @@
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 # ProxyManX Windows
 
 A comprehensive Windows proxy management tool built with Python.
