@@ -1,6 +1,6 @@
 """
-ProxyMan Windows - Installation Script
-Install ProxyMan Windows to system PATH
+ProxyManX Windows - Installation Script
+Install ProxyManX Windows to system PATH
 """
 
 import os
@@ -53,17 +53,17 @@ def install_dependencies():
 def create_batch_file():
     """Create batch file for easy execution"""
     batch_content = f"""@echo off
-cd /d "{os.path.dirname(os.path.abspath(__file__))}"
-python proxyman.py %*
+cd /d "%~dp0"
+python proxymanx.py %*
 """
     
     try:
-        with open('proxyman.bat', 'w') as f:
+        with open('proxymanx.bat', 'w') as f:
             f.write(batch_content)
-        print_colored("Created proxyman.bat", 'green')
+        print_colored("Created proxymanx.bat", 'green')
         return True
     except Exception as e:
-        print_colored(f"❌ Failed to create batch file: {e}", 'red')
+        print_colored(f"Failed to create batch file: {e}", 'red')
         return False
 
 
@@ -74,9 +74,9 @@ def add_to_path():
     # Check if we're on Windows
     if os.name != 'nt':
         print_colored("PATH modification only supported on Windows", 'yellow')
-        print_colored("You can still run ProxyMan using:", 'cyan')
-        print_colored(f"  python {os.path.join(current_dir, 'proxyman.py')}", 'white')
-        print_colored(f"  or {os.path.join(current_dir, 'proxyman.bat')}", 'white')
+        print_colored("You can still run ProxyManX using:", 'cyan')
+        print_colored(f"  python {os.path.join(current_dir, 'proxymanx.py')}", 'white')
+        print_colored(f"  or {os.path.join(current_dir, 'proxymanx.bat')}", 'white')
         return False
     
     try:
@@ -128,9 +128,9 @@ def add_to_path():
         
     except ImportError:
         print_colored("winreg module not available (Windows only)", 'red')
-        print_colored("You can still run ProxyMan using:", 'cyan')
-        print_colored(f"  python {os.path.join(current_dir, 'proxyman.py')}", 'white')
-        print_colored(f"  or {os.path.join(current_dir, 'proxyman.bat')}", 'white')
+        print_colored("You can still run ProxyManX using:", 'cyan')
+        print_colored(f"  python {os.path.join(current_dir, 'proxymanx.py')}", 'white')
+        print_colored(f"  or {os.path.join(current_dir, 'proxymanx.bat')}", 'white')
         return False
         
     except Exception as e:
@@ -181,15 +181,15 @@ def add_to_path():
         
         # If all fails, provide manual instructions
         print_colored("Could not automatically add to PATH", 'yellow')
-        print_colored("You can still run ProxyMan using:", 'cyan')
-        print_colored(f"  python {os.path.join(current_dir, 'proxyman.py')}", 'white')
-        print_colored(f"  or {os.path.join(current_dir, 'proxyman.bat')}", 'white')
+        print_colored("You can still run ProxyManX using:", 'cyan')
+        print_colored(f"  python {os.path.join(current_dir, 'proxymanx.py')}", 'white')
+        print_colored(f"  or {os.path.join(current_dir, 'proxymanx.bat')}", 'white')
         return False
 
 
 def main():
     """Main installation function"""
-    print_colored("ProxyMan Windows Installer", 'cyan')
+    print_colored("ProxyManX Windows Installer", 'cyan')
     print_colored("=" * 40, 'cyan')
     
     # Check Python version
@@ -213,14 +213,14 @@ def main():
     print_colored("\nInstallation completed!", 'green')
     
     if path_success:
-        print_colored("You can now use ProxyMan with:", 'cyan')
-        print_colored("  proxyman help", 'white')
-        print_colored("  proxyman set", 'white')
-        print_colored("  proxyman list", 'white')
+        print_colored("You can now use ProxyManX with:", 'cyan')
+        print_colored("  proxymanx help", 'white')
+        print_colored("  proxymanx set", 'white')
+        print_colored("  proxymanx list", 'white')
     else:
         print_colored("Manual usage instructions:", 'cyan')
-        print_colored("  python proxyman.py help", 'white')
-        print_colored("  .\\proxyman.bat help", 'white')
+        print_colored("  python proxymanx.py help", 'white')
+        print_colored("  .\\proxymanx.bat help", 'white')
         print_colored("\nTo add to PATH manually:", 'yellow')
         print_colored("  1. Open Environment Variables in System Properties", 'white')
         print_colored(f"  2. Add this path to your user PATH: {os.path.dirname(os.path.abspath(__file__))}", 'white')

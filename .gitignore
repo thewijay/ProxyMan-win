@@ -69,7 +69,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# ProxyMan specific
-.proxyman/
+# ProxyManX specific
+.proxymanx/
 *.log
 dist/

@@ -1,5 +1,5 @@
 """
-ProxyMan Windows - Main Application Module
+ProxyManX Windows - Main Application Module
 Core application logic for proxy management.
 """
 
@@ -11,7 +11,7 @@ from targets import get_available_targets, get_target_descriptions, PROXY_TARGET
 from utils import *
 
 
-class ProxyManager:
+class ProxyManX:
     """Main proxy management class."""
     
     def __init__(self):
@@ -204,7 +204,7 @@ class ProxyManager:
         
         if not configs:
             print_colored("No saved profiles found", self.colors['yellow'])
-            print_colored("Use 'proxyman set' to create a new profile", self.colors['cyan'])
+            print_colored("Use 'proxymanx set' to create a new profile", self.colors['cyan'])
             return
         
         # Detect currently active profile by comparing with system proxy
@@ -223,7 +223,7 @@ class ProxyManager:
         else:
             print_colored("\nNo active profile detected", self.colors['yellow'])
         
-        print_colored("\nUse 'proxyman configs' to see detailed configuration for all targets", self.colors['cyan'])
+        print_colored("\nUse 'proxymanx configs' to see detailed configuration for all targets", self.colors['cyan'])
     
     def load_and_apply_config(self, config_name: str) -> None:
         """Load and apply a saved configuration."""
@@ -287,8 +287,8 @@ class ProxyManager:
                 print_colored(f"\n[ERROR] {target_name.title()}", self.colors['red'])
                 print_colored(f"  Error reading settings: {e}", self.colors['white'])
         
-        print_colored(f"\nUse 'proxyman set' to configure proxy settings", self.colors['cyan'])
-        print_colored(f"Use 'proxyman list' to see saved profiles", self.colors['cyan'])
+        print_colored(f"\nUse 'proxymanx set' to configure proxy settings", self.colors['cyan'])
+        print_colored(f"Use 'proxymanx list' to see saved profiles", self.colors['cyan'])
     
     def save_current_config(self, config_name: str) -> None:
         """Save current proxy configuration."""
@@ -296,17 +296,17 @@ class ProxyManager:
         
         # This would need to read current settings from all targets
         # For now, we'll just show an info message
-        print_info("Use 'proxyman set' to create and save a new configuration")
+        print_info("Use 'proxymanx set' to create and save a new configuration")
     
     def show_help(self) -> None:
         """Show help information."""
-        print_header("ProxyMan Windows - Help")
+        print_header("ProxyManX Windows - Help")
         
         help_text = f"""
-{self.colors['cyan']}ProxyMan Windows{self.colors['reset']} - Proxy configuration made easy
+{self.colors['cyan']}ProxyManX Windows{self.colors['reset']} - Proxy configuration made easy
 
 {self.colors['bold']}Usage:{self.colors['reset']}
-  proxyman <command> [options]
+  proxymanx <command> [options]
 
 {self.colors['bold']}Commands:{self.colors['reset']}
   {self.colors['green']}set{self.colors['reset']}                    Set proxy settings interactively
@@ -321,13 +321,13 @@ class ProxyManager:
   {self.colors['green']}help{self.colors['reset']}                   Show this help message
 
 {self.colors['bold']}Examples:{self.colors['reset']}
-  proxyman set                   # Interactive proxy setup
-  proxyman load office           # Load 'office' configuration
-  proxyman list                  # Show saved profiles with active status
-  proxyman show-configs          # Show current settings for all targets
-  proxyman unset                 # Remove proxy settings (interactive)
-  proxyman unset all             # Remove proxy for all targets
-  proxyman unset windows npm     # Remove proxy for specific targets
+  proxymanx set                   # Interactive proxy setup
+  proxymanx load office           # Load 'office' configuration
+  proxymanx list                  # Show saved profiles with active status
+  proxymanx show-configs          # Show current settings for all targets
+  proxymanx unset                 # Remove proxy settings (interactive)
+  proxymanx unset all             # Remove proxy for all targets
+  proxymanx unset windows npm     # Remove proxy for specific targets
 
 {self.colors['bold']}Supported Targets:{self.colors['reset']}
 """
@@ -339,7 +339,7 @@ class ProxyManager:
         print(help_text)
         
         print_colored(f"\n{self.colors['bold']}Note:{self.colors['reset']} Some operations require administrator privileges")
-        print_colored(f"Repository: https://github.com/thewijay/ProxyMan-win", self.colors['blue'])
+        print_colored(f"Repository: https://github.com/thewijay/ProxyManX", self.colors['blue'])
     
     def _detect_active_profile(self) -> Optional[str]:
         """Detect which saved profile matches the current proxy settings."""
@@ -397,7 +397,7 @@ def main():
     setup_signal_handlers()
     
     try:
-        manager = ProxyManager()
+        manager = ProxyManX()
         
         if len(sys.argv) < 2:
             manager.show_help()
@@ -433,19 +433,19 @@ def main():
         
         elif command == 'load':
             if len(sys.argv) < 3:
-                print_error("Usage: proxyman load <config_name>")
+                print_error("Usage: proxymanx load <config_name>")
                 return
             manager.load_and_apply_config(sys.argv[2])
         
         elif command == 'save':
             if len(sys.argv) < 3:
-                print_error("Usage: proxyman save <config_name>")
+                print_error("Usage: proxymanx save <config_name>")
                 return
             manager.save_current_config(sys.argv[2])
         
         elif command == 'delete':
             if len(sys.argv) < 3:
-                print_error("Usage: proxyman delete <config_name>")
+                print_error("Usage: proxymanx delete <config_name>")
                 return
             manager.config_manager.delete_config(sys.argv[2])
         

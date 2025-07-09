@@ -1,5 +1,5 @@
 """
-ProxyMan Windows - Utility Functions
+ProxyManX Windows - Utility Functions
 Common utilities and helper functions used across the application.
 """
 

@@ -1,5 +1,5 @@
 """
-ProxyMan Windows - Proxy Target Handlers
+ProxyManX Windows - Proxy Target Handlers
 Individual handlers for different proxy targets (System, Git, NPM, etc.)
 """
 
@@ -542,7 +542,7 @@ class PowerShellProxyTarget(ProxyTarget):
             
             # Add proxy settings to profile
             proxy_script = f"""
-# ProxyMan Windows - Proxy Settings
+# ProxyManX Windows - Proxy Settings
 $env:HTTP_PROXY = "{proxy_url}"
 $env:HTTPS_PROXY = "{proxy_url}"
 $env:NO_PROXY = "{config.get('no_proxy', '')}"
@@ -590,7 +590,7 @@ $env:NO_PROXY = "{config.get('no_proxy', '')}"
             skip_lines = False
             
             for line in lines:
-                if "# ProxyMan Windows - Proxy Settings" in line:
+                if "# ProxyManX Windows - Proxy Settings" in line:
                     skip_lines = True
                     continue
                 elif skip_lines and (line.strip() == "" or line.startswith("#")):
@@ -617,7 +617,7 @@ $env:NO_PROXY = "{config.get('no_proxy', '')}"
             with open(self.profile_path, 'r', encoding='utf-8') as f:
                 content = f.read()
             
-            if "ProxyMan Windows - Proxy Settings" in content:
+            if "ProxyManX Windows - Proxy Settings" in content:
                 return {
                     'status': 'Configured',
                     'profile_path': str(self.profile_path)

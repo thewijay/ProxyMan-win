@@ -1,6 +1,6 @@
-# ProxyMan Windows
+# ProxyManX Windows
 
-A Windows port of the Linux ProxyMan proxy management tool, built with Python.
+A comprehensive Windows proxy management tool built with Python.
 
 ## Features
 
@@ -29,8 +29,8 @@ A Windows port of the Linux ProxyMan proxy management tool, built with Python.
 
 ```powershell
 # Download or clone the repository
-git clone https://github.com/thewijay/ProxyMan-win.git
-cd ProxyMan-win
+git clone https://github.com/thewijay/ProxyManX.git
+cd ProxyManX
 
 # Run the Python installer
 python install.py
@@ -58,12 +58,12 @@ python install.py
 pip install -r requirements.txt
 
 # Use the batch file to run the tool
-.\proxyman.bat help
+.\proxymanx.bat help
 ```
 
 ## Uninstallation
 
-To completely remove ProxyMan Windows from your system:
+To completely remove ProxyManX Windows from your system:
 
 ### Option 1: Python Uninstaller
 
@@ -89,10 +89,10 @@ python uninstall.py
 
 The uninstaller will:
 
-- Remove ProxyMan from PATH
+- Remove ProxyManX from PATH
 - Delete configuration files and saved profiles
 - Remove desktop shortcuts
-- Optionally clear all proxy settings set by ProxyMan
+- Optionally clear all proxy settings set by ProxyManX
 - Clean up all installation artifacts
 
 ## Usage
@@ -100,49 +100,49 @@ The uninstaller will:
 ### Set Proxy
 
 ```bash
-proxyman set
+proxymanx set
 ```
 
 ### Unset Proxy
 
 ```bash
-proxyman unset
+proxymanx unset
 ```
 
 ### List Current Settings
 
 ```bash
-proxyman list
+proxymanx list
 ```
 
 ### Save Configuration
 
 ```bash
-proxyman save profile_name
+proxymanx save profile_name
 ```
 
 ### Load Configuration
 
 ```bash
-proxyman load profile_name
+proxymanx load profile_name
 ```
 
 ### List Configurations
 
 ```bash
-proxyman configs
+proxymanx configs
 ```
 
 ### Delete Configuration
 
 ```bash
-proxyman delete profile_name
+proxymanx delete profile_name
 ```
 
 ### Show Help
 
 ```bash
-proxyman help
+proxymanx help
 ```
 
 ## Supported Targets
@@ -157,7 +157,7 @@ proxyman help
 
 ## Configuration Files
 
-Profiles are stored in `%USERPROFILE%\.proxyman\` directory.
+Profiles are stored in `%USERPROFILE%\.proxymanx\` directory.
 
 ## Notes
 
@@ -169,31 +169,31 @@ Profiles are stored in `%USERPROFILE%\.proxyman\` directory.
 ## Project Structure
 
 ```
-ProxyMan-win/
+ProxyManX/
 ├── src/                    # Core application modules
 │   ├── config.py          # Configuration management
-│   ├── proxyman.py        # Main application logic
+│   ├── proxymanx.py       # Main application logic
 │   ├── targets.py         # Proxy target handlers
 │   └── utils.py           # Utility functions
 ├── install.py             # Python installer
 ├── install.ps1            # Unified PowerShell installer
 ├── uninstall.py           # Python uninstaller
 ├── uninstall.ps1          # PowerShell uninstaller
-├── proxyman.py            # Main entry point
-├── proxyman.bat           # Windows batch launcher
+├── proxymanx.py           # Main entry point
+├── proxymanx.bat          # Windows batch launcher
 ├── requirements.txt       # Python dependencies
 └── README.md              # This file
 ```
 
 ## License
 
-MIT License - Same as the original ProxyMan project
+MIT License
 
 ## Troubleshooting
 
 ### Ctrl+C Not Working During Interactive Prompts
 
-**Problem**: When ProxyMan is prompting for input (like proxy host, port, username), pressing Ctrl+C doesn't stop the program immediately.
+**Problem**: When ProxyManX is prompting for input (like proxy host, port, username), pressing Ctrl+C doesn't stop the program immediately.
 
 **Cause**: This was due to input functions not properly handling KeyboardInterrupt signals.
 
@@ -255,7 +255,7 @@ MIT License - Same as the original ProxyMan project
 **Slow startup or operations**
 
 - Check if antivirus is scanning Python processes
-- Add ProxyMan directory to antivirus exclusions
+- Add ProxyManX directory to antivirus exclusions
 - Ensure Python and pip are up to date
 
 **Registry operations taking too long**
@@ -268,11 +268,11 @@ MIT License - Same as the original ProxyMan project
 
 ```powershell
 # Display help and available commands
-proxyman help
+proxymanx help
 # or
-.\proxyman.bat help
+.\proxymanx.bat help
 # or
-python proxyman.py help
+python proxymanx.py help
 ```
 
 **For additional support**:

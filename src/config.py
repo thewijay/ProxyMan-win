@@ -1,5 +1,5 @@
 """
-ProxyMan Windows - Configuration Management Module
+ProxyManX Windows - Configuration Management Module
 Handles saving, loading, and managing proxy configuration profiles.
 """
 
@@ -16,7 +16,7 @@ class ConfigManager:
     
     def __init__(self):
         self.colors = get_colors()
-        self.config_dir = Path.home() / '.proxyman'
+        self.config_dir = Path.home() / '.proxymanx'
         self.config_dir.mkdir(exist_ok=True)
         self.default_config = 'default'
     
@@ -142,8 +142,8 @@ class ConfigManager:
             for config in configs:
                 print_colored(f"  • {config}", self.colors['white'])
         
-        print_colored("\nUse 'proxyman list' to see profiles with active status", self.colors['cyan'])
-        print_colored("Use 'proxyman show-configs' to see current settings for all targets", self.colors['cyan'])
+        print_colored("\nUse 'proxymanx list' to see profiles with active status", self.colors['cyan'])
+        print_colored("Use 'proxymanx show-configs' to see current settings for all targets", self.colors['cyan'])
     
     def get_config_info(self, name: str) -> None:
         """Print detailed information about a configuration."""
@@ -179,4 +179,4 @@ class ConfigManager:
                 print_colored(f"  Error reading settings: {e}", self.colors['red'])
         
         print_colored("\n" + "=" * 60, self.colors['cyan'])
-        print_colored("Use 'proxyman list' to see available profiles", self.colors['cyan'])
+        print_colored("Use 'proxymanx list' to see available profiles", self.colors['cyan'])

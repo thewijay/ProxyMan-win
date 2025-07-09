@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-ProxyMan Windows - Uninstaller Script
-Remove ProxyMan Windows from the system
+ProxyManX Windows - Uninstaller Script
+Remove ProxyManX Windows from the system
 """
 
 import os
@@ -39,7 +39,7 @@ def is_admin():
 
 
 def remove_from_path():
-    """Remove ProxyMan directory from PATH"""
+    """Remove ProxyManX directory from PATH"""
     current_dir = os.path.dirname(os.path.abspath(__file__))
     
     try:
@@ -82,7 +82,7 @@ def remove_from_path():
 
 def remove_config_files():
     """Remove configuration files"""
-    config_dir = Path.home() / '.proxyman'
+    config_dir = Path.home() / '.proxymanx'
     
     if config_dir.exists():
         try:
@@ -99,7 +99,7 @@ def remove_config_files():
 
 def remove_desktop_shortcut():
     """Remove desktop shortcut if it exists"""
-    desktop_shortcut = Path.home() / "Desktop" / "ProxyMan.lnk"
+    desktop_shortcut = Path.home() / "Desktop" / "ProxyManX.lnk"
     
     if desktop_shortcut.exists():
         try:
@@ -116,12 +116,12 @@ def remove_desktop_shortcut():
 
 def remove_batch_file():
     """Remove the batch file"""
-    batch_file = Path("proxyman.bat")
+    batch_file = Path("proxymanx.bat")
     
     if batch_file.exists():
         try:
             batch_file.unlink()
-            print_colored("Removed proxyman.bat", 'green')
+            print_colored("Removed proxymanx.bat", 'green')
             return True
         except Exception as e:
             print_colored(f"Failed to remove batch file: {e}", 'red')
@@ -136,10 +136,10 @@ def clear_proxy_settings():
     print_colored("\nProxy Settings Cleanup", 'cyan')
     
     try:
-        # Try to run ProxyMan unset command with 'all' parameter to bypass interactive mode
-        if Path("proxyman.py").exists():
+        # Try to run ProxyManX unset command with 'all' parameter to bypass interactive mode
+        if Path("proxymanx.py").exists():
             print_colored("Clearing proxy settings...", 'blue')
-            result = subprocess.run([sys.executable, "proxyman.py", "unset", "all"], 
+            result = subprocess.run([sys.executable, "proxymanx.py", "unset", "all"], 
                                   capture_output=True, text=True, timeout=30)
             
             if result.returncode == 0:
@@ -149,7 +149,7 @@ def clear_proxy_settings():
                 if result.stderr:
                     print_colored(f"Error: {result.stderr.strip()}", 'yellow')
         else:
-            print_colored("ProxyMan not found, cannot clear proxy settings", 'yellow')
+            print_colored("ProxyManX not found, cannot clear proxy settings", 'yellow')
             print_colored("You may need to manually clear proxy settings", 'yellow')
     except subprocess.TimeoutExpired:
         print_colored("Timeout while clearing proxy settings", 'yellow')
@@ -159,13 +159,13 @@ def clear_proxy_settings():
 
 def main():
     """Main uninstallation function"""
-    print_colored("ProxyMan Windows Uninstaller", 'cyan')
+    print_colored("ProxyManX Windows Uninstaller", 'cyan')
     print_colored("=" * 40, 'cyan')
     
     # Confirm uninstallation
-    print_colored("\nThis will remove ProxyMan Windows from your system.", 'yellow')
+    print_colored("\nThis will remove ProxyManX Windows from your system.", 'yellow')
     print_colored("The following will be removed:", 'white')
-    print_colored("  • ProxyMan executable and files", 'white')
+    print_colored("  • ProxyManX executable and files", 'white')
     print_colored("  • Configuration files and saved profiles", 'white')
     print_colored("  • PATH environment variable entries", 'white')
     print_colored("  • Desktop shortcuts", 'white')
@@ -205,7 +205,7 @@ def main():
     remove_batch_file()
     
     print_colored("\nUninstallation completed!", 'green')
-    print_colored("ProxyMan Windows has been removed from your system.", 'green')
+    print_colored("ProxyManX Windows has been removed from your system.", 'green')
     
     print_colored("\n📋 Manual cleanup (if needed):", 'cyan')
     print_colored("  • Check Windows proxy settings in Internet Options", 'white')
@@ -216,7 +216,7 @@ def main():
     if not is_admin():
         print_colored("\nNote: Some PATH changes may require administrator privileges", 'yellow')
     
-    print_colored("\nThank you for using ProxyMan Windows!", 'green')
+    print_colored("\nThank you for using ProxyManX Windows!", 'green')
 
 
 if __name__ == "__main__":

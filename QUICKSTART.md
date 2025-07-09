@@ -1,4 +1,4 @@
-# ProxyMan Windows - Quick Start Guide
+# ProxyManX Windows - Quick Start Guide
 
 ## Installation
 
@@ -6,8 +6,8 @@
 
 ```powershell
 # Download or clone the repository
-git clone https://github.com/thewijay/ProxyMan-win.git
-cd ProxyMan-win
+git clone https://github.com/thewijay/ProxyManX.git
+cd ProxyManX
 
 # Run the Python installer (automatically adds to user PATH)
 python install.py
@@ -30,12 +30,12 @@ python install.py
 pip install -r requirements.txt
 
 # Use the batch file to run the tool
-.\proxyman.bat help
+.\proxymanx.bat help
 ```
 
 ## Uninstallation
 
-To remove ProxyMan Windows from your system:
+To remove ProxyManX Windows from your system:
 
 ### Python Uninstaller (Recommended)
 
@@ -44,8 +44,9 @@ python uninstall.py
 ```
 
 The uninstaller will automatically:
+
 - Clear all proxy settings (no prompts needed)
-- Remove ProxyMan from system PATH
+- Remove ProxyManX from system PATH
 - Remove configuration files and saved profiles
 - Remove desktop shortcuts and batch files
 
@@ -69,12 +70,12 @@ The uninstaller will automatically:
 ### Set Proxy Settings
 
 ```powershell
-# If proxyman is in PATH (after admin installation):
-proxyman set
+# If proxymanx is in PATH (after admin installation):
+proxymanx set
 
 # If not in PATH, use one of these:
-.\proxyman.bat set
-python proxyman.py set
+.\proxymanx.bat set
+python proxymanx.py set
 ```
 
 This will start an interactive setup where you can:
@@ -87,12 +88,12 @@ This will start an interactive setup where you can:
 ### List Current Settings
 
 ```powershell
-# If proxyman is in PATH:
-proxyman list
+# If proxymanx is in PATH:
+proxymanx list
 
 # If not in PATH, use one of these:
-.\proxyman.bat list
-python proxyman.py list
+.\proxymanx.bat list
+python proxymanx.py list
 ```
 
 Shows current proxy settings for all supported applications.
@@ -100,18 +101,18 @@ Shows current proxy settings for all supported applications.
 ### Remove Proxy Settings
 
 ```powershell
-# If proxyman is in PATH:
-proxyman unset
+# If proxymanx is in PATH:
+proxymanx unset
 
 # Remove all proxy settings (non-interactive):
-proxyman unset all
+proxymanx unset all
 
 # Remove proxy for specific targets:
-proxyman unset git npm
+proxymanx unset git npm
 
 # If not in PATH, use one of these:
-.\proxyman.bat unset
-python proxyman.py unset all
+.\proxymanx.bat unset
+python proxymanx.py unset all
 ```
 
 Removes proxy settings from selected applications.
@@ -120,20 +121,20 @@ Removes proxy settings from selected applications.
 
 ```powershell
 # List saved configurations
-proxyman configs
-# or: .\proxyman.bat configs
+proxymanx configs
+# or: .\proxymanx.bat configs
 
 # Save current settings
-proxyman save office_proxy
-# or: .\proxyman.bat save office_proxy
+proxymanx save office_proxy
+# or: .\proxymanx.bat save office_proxy
 
 # Load saved configuration
-proxyman load office_proxy
-# or: .\proxyman.bat load office_proxy
+proxymanx load office_proxy
+# or: .\proxymanx.bat load office_proxy
 
 # Delete saved configuration
-proxyman delete office_proxy
-# or: .\proxyman.bat delete office_proxy
+proxymanx delete office_proxy
+# or: .\proxymanx.bat delete office_proxy
 ```
 
 ## Supported Applications
@@ -150,7 +151,7 @@ proxyman delete office_proxy
 
 ```powershell
 # Set up corporate proxy with authentication
-.\proxyman.bat set
+.\proxymanx.bat set
 # Follow prompts to enter corporate proxy details
 # Save as 'corporate' for easy reuse
 ```
@@ -159,14 +160,14 @@ proxyman delete office_proxy
 
 ```powershell
 # Load home proxy settings
-.\proxyman.bat load home
+.\proxymanx.bat load home
 ```
 
 ### Development
 
 ```powershell
 # Quickly disable proxy for development
-.\proxyman.bat unset
+.\proxymanx.bat unset
 ```
 
 ## Tips
@@ -174,8 +175,8 @@ proxyman delete office_proxy
 1. **Run as Administrator** for full functionality
 2. **Save configurations** for easy switching between environments
 3. **Use selective targeting** to only configure specific applications
-4. **Check current settings** with `.\proxyman.bat list` before making changes
-5. **If not in PATH**: Use `.\proxyman.bat` or `python proxyman.py` instead of just `proxyman`
+4. **Check current settings** with `.\proxymanx.bat list` before making changes
+5. **If not in PATH**: Use `.\proxymanx.bat` or `python proxymanx.py` instead of just `proxymanx`
 
 ## Troubleshooting
 
@@ -199,29 +200,29 @@ proxyman delete office_proxy
 - Install dependencies: `pip install -r requirements.txt`
 - Make sure you're in the correct directory
 
-**Error: "proxyman is not recognized"**
+**Error: "proxymanx is not recognized"**
 
-This happens when ProxyMan is not in your system PATH:
+This happens when ProxyManX is not in your system PATH:
 
 ```powershell
 # First, check if the installer succeeded:
 python install.py
 
 # If PATH wasn't added automatically, use these alternatives:
-.\proxyman.bat help
-python proxyman.py help
+.\proxymanx.bat help
+python proxymanx.py help
 
 # Or add to PATH manually:
 # 1. Open "Environment Variables" in Windows System Properties
 # 2. Edit your user PATH variable
-# 3. Add the ProxyMan directory path
+# 3. Add the ProxyManX directory path
 # 4. Restart your terminal
 ```
 
 **Error: "Administrator privileges required to add to system PATH"**
 
 - The Python installer now automatically tries user PATH first (no admin needed)
-- Use `.\proxyman.bat` or `python proxyman.py` if PATH addition fails
+- Use `.\proxymanx.bat` or `python proxymanx.py` if PATH addition fails
 - For system-wide installation, run as Administrator or use PowerShell installer
 
 ### Common Issues
@@ -260,24 +261,24 @@ python -c "import py_compile; py_compile.compile('uninstall.py')"
 python uninstall.py
 
 # Or use the manual cleanup approach:
-python proxyman.py unset all
+python proxymanx.py unset all
 python uninstall.py
 ```
 
-**Error: "Command 'proxyman.py unset' timed out after 30 seconds"**
+**Error: "Command 'proxymanx.py unset' timed out after 30 seconds"**
 
 - Update to the latest version which includes non-interactive unset
-- The new version uses `proxyman.py unset all` for automatic cleanup
+- The new version uses `proxymanx.py unset all` for automatic cleanup
 
 ### Getting Help
 
 ```powershell
-# If proxyman is in PATH:
-proxyman help
+# If proxymanx is in PATH:
+proxymanx help
 
 # If not in PATH, use one of these:
-.\proxyman.bat help
-python proxyman.py help
+.\proxymanx.bat help
+python proxymanx.py help
 ```
 
 For more detailed help, check the README.md file or visit the project repository.
@@ -295,4 +296,4 @@ For more detailed help, check the README.md file or visit the project repository
 - Check the source code for advanced usage
 - Contribute to the project on GitHub
 - Report bugs or request features
-- Use `python uninstall.py` or `.\uninstall.ps1` to remove ProxyMan when no longer needed
+- Use `python uninstall.py` or `.\uninstall.ps1` to remove ProxyManX when no longer needed
